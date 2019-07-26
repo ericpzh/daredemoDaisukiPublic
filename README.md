@@ -1,2 +1,2 @@
-# daredemoDaisukiPublic
+# Daredemo Daisuki!
 Daredemo Daisuki!
