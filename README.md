@@ -6,6 +6,8 @@ https://vtubersfeed.herokuapp.com/
 
 ## Main Tech
 React-native, ReactJS, ExpressJS
+### Secondary Tech
+Expo, MongoDB
 
 ## File Structure
 React-native App:
