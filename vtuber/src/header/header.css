@@ -1,0 +1,122 @@
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  -webkit-transition: all 250ms ease;
+  -moz-transition: all 250ms ease;
+  -o-transition: all 250ms ease;
+  transition: all 250ms ease;
+}
+.header-lg {
+  height: 100px;
+  background-color: rgba(0,0,0,0);
+}
+.header-sm {
+  height: 70px;
+  background-color: rgba(0,0,0,0.7);
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.7);
+}
+.header-mobile {
+  height: 70px;
+  background-color: rgba(0,0,0,0.9);
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.7);
+}
+.header-expanded-menu{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.7);
+}
+.header-container{
+  margin: auto;
+  max-width: 768px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header-item-container{
+  font-family: 'Artifika';
+}
+.logo-container{
+  color: #eee;
+  letter-spacing: 1px;
+}
+.expandable-container{
+  padding: 0 30px;
+  color: white;
+}
+.button-container{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+.header-logo:hover{
+  cursor: pointer;
+}
+.header-item{
+  color: #ddd;
+  font-weight:600;
+}
+.header-item-active{
+  background-color: rgba(0,0,0,1);
+  border-radius: 5px;
+}
+.header-item:hover{
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.expanded-header{
+  position: fixed;
+  background-color: rgba(30,30,30,1);
+  top: 70px;
+  width: 100%;
+  z-index: 1000;
+}
+.menu-expanded-enter {
+  opacity: 0;
+  max-height: 0;
+}
+.menu-expanded-enter-active {
+  opacity: 1;
+  max-height: 250px;
+  -webkit-transition: opacity 500ms ease-in-out, max-height 0.25s ease-in-out;
+  -moz-transition: opacity 500ms ease-in-out, max-height 0.25s ease-in-out;
+  -o-transition: opacity 500ms ease-in-out, max-height 0.25s ease-in-out;
+  transition: opacity 500ms ease-in-out, max-height 0.25s ease-in-out;
+}
+.menu-expanded-exit {
+  opacity: 1;
+  max-height: 250px;
+}
+.menu-expanded-exit-active {
+  opacity: 0;
+  max-height: 0;
+  -webkit-transition: opacity 250ms ease-in-out, max-height 0.5s ease-in-out;
+  -moz-transition: opacity 250ms ease-in-out, max-height 0.5s ease-in-out;
+  -o-transition: opacity 250ms ease-in-out, max-height 0.5s ease-in-out;
+  transition: opacity 250ms ease-in-out, max-height 0.5s ease-in-out;
+}
+.menu-icon-enter {
+  transform: rotate(0deg);
+}
+.menu-icon-enter-active {
+  transform: rotate(180deg);
+  -webkit-transition: all 500ms ease-in-out;
+  -moz-transition: all 500ms ease-in-out;
+  -o-transition: all 500ms ease-in-out;
+  transition: all 500ms ease-in-out;
+}
+.menu-icon-exit {
+  transform: rotate(180deg);
+}
+.menu-icon-exit-active {
+  transform: rotate(0deg);
+  -webkit-transition: all 500ms ease-in-out;
+  -moz-transition: all 500ms ease-in-out;
+  -o-transition: all 500ms ease-in-out;
+  transition: all 500ms ease-in-out;
+}

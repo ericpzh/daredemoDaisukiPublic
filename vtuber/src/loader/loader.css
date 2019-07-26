@@ -1,0 +1,63 @@
+.Loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.9);
+  z-index: 500;
+}
+.images {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.image {
+  animation: loading 4s ease-in-out infinite;
+}
+.load2{
+  animation-delay: 0.25s;
+}
+.load3{
+  animation-delay: 0.5s;
+}
+.load4{
+  animation-delay: 0.75s;
+}
+.load5{
+  animation-delay: 1s;
+}
+.load6{
+  animation-delay: 1.25s;
+}
+@keyframes loading {
+    0% {
+      transform: translateY(0);
+      opacity: 0;
+    }
+    10% {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    20% {
+      transform: translateY(7.5%);
+      opacity: 1;
+    }
+    25% {
+      transform: translateY(0%);
+    }
+    70% {
+      opacity: 1;
+    }
+    80% {
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 0;
+    }
+}

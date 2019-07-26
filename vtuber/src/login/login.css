@@ -1,0 +1,145 @@
+.Login {
+
+}
+.login {
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  background-color: black;
+
+  background-position: center;
+  background-size: cover;
+	background-repeat: no-repeat;
+	animation: animatedBackground 40s ease-in-out infinite;
+}
+.login-mask {
+  background-color: rgba(0,0,0,0.6);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  color: white;
+}
+.title {
+  max-width: 738px;
+  padding: 0 20px;
+  margin: 40px auto;
+  font-family: 'Artifika';
+  font-size: 25px;
+  flex-direction: row;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+.title-mobile {
+  margin: 40px auto;
+  padding: 0 30px;
+  font-family: 'Artifika';
+  font-size: 15px;
+  flex-direction: row;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+.title-text{
+}
+.form {
+  width: 768px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.form-mobile{
+  width: 90%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.input-container {
+  margin: 10px auto;
+  width: 300px;
+  height: 40px;
+}
+.input-container-mobile {
+  width: 100%;
+  height: 40px;
+  margin: 20px auto;
+}
+.input{
+  width: 90%;
+  height: 100%;
+  border-radius: 5px;
+  font-family: 'Alef';
+  font-size: 20px;
+  padding: 0 5%;
+}
+.button-group{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.button{
+  margin: 15px 0;
+  padding: 2px 0;
+  width: 150px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  background: #0080FF;
+  color: white;
+}
+.signin{
+  background: #0080FF;
+  color: white;
+}
+.signup{
+  background: #eee;
+  color: black;
+}
+.signin:hover{
+  background: #006dd9;
+  cursor: pointer;
+}
+.signup:hover{
+  background: #ddd;
+  cursor: pointer;
+}
+.button-text{
+  font-family: 'Alef';
+  font-size: 15px;
+}
+@keyframes animatedBackground {
+  0% {
+    background-image: url("../assets/appBackground2.jpg");
+  }
+  22.5% {
+    background-image: url("../assets/appBackground2.jpg");
+  }
+  25% {
+  }
+  27.5% {
+    background-image: url("../assets/appBackground1.jpg");
+  }
+  72.5% {
+    background-image: url("../assets/appBackground1.jpg");
+  }
+  75% {
+  }
+  77.5% {
+    background-image: url("../assets/appBackground2.jpg");
+  }
+  100% {
+    background-image: url("../assets/appBackground2.jpg");
+  }
+}

@@ -1,0 +1,37 @@
+.demo{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+.section-demo{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 768px;
+}
+.section-demo-mobile{
+  flex-wrap: wrap;
+}
+.even {
+  background-color: #fff;
+}
+.odd {
+  background-color: #f5f5f5;
+}
+.section-demo-wrapper{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.subsection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 30px;
+  font-family: 'Alef';
+  margin: auto;
+}
