@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { WebView } from 'react-native-webview';
 import { ScreenOrientation } from 'expo';
 
-import { styles, fontsStyles } from '../../../styles/App/youtubeScreenStyles.js';
+import { styles, fontsStyles } from '../../../styles/App/Home/youtubeScreenStyles.js';
 import { getActivities, getChannels } from '../../../api/youtube.js';
 import { filterChanged, reset, init, fetchActivitiesBegin, fetchActivitiesSuccess, fetchActivitiesFailure, fetchChannelsBegin, fetchChannelsSuccess, fetchChannelsFailure, displayWebview } from '../../../actions/youtubeActions.js';
 import { fetchImageBeginYoutube, fetchImageSuccessYoutubeScreen, fetchImageFailureYoutube } from '../../../actions/vtuberActions.js';

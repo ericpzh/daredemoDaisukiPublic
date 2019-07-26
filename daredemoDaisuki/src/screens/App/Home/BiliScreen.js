@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { WebView } from 'react-native-webview';
 import { ScreenOrientation } from 'expo';
 
-import { styles, fontsStyles } from '../../../styles/App/biliScreenStyles.js';
+import { styles, fontsStyles } from '../../../styles/App/Home/biliScreenStyles.js';
 import altImg from '../../../assets/altImg.jpg';
 import { getAccount, getLiveAccount, getSubmitVideos } from '../../../api/bilibili.js';
 import { fetchImageBeginBili, fetchImageSuccessBiliScreen, fetchImageFailureBili } from '../../../actions/vtuberActions.js';

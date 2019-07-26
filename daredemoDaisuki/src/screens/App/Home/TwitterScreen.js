@@ -9,7 +9,7 @@ import { ScreenOrientation } from 'expo';
 import { Col, Row, Grid } from "react-native-easy-grid";
 //import { WebView } from 'react-native-webview';
 
-import { styles, fontsStyles } from '../../../styles/App/twitterScreenStyles.js';
+import { styles, fontsStyles } from '../../../styles/App/Home/twitterScreenStyles.js';
 import { getTimeline } from  '../../../api/twitter.js';
 import altImg from '../../../assets/altImg.jpg';
 import { filterChanged, reset, init, fetchTimelineBegin, fetchTimelineSuccess, fetchTimelineFailure } from '../../../actions/twitterActions.js';

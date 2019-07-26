@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-import { styles, fontsStyles }from '../../../styles/App/homeTutorialStyles.js';
+import { styles, fontsStyles }from '../../../styles/App/Home/homeTutorialStyles.js';
 
 export default class Tutorial extends React.Component {
   render() {
