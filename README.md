@@ -1,13 +1,15 @@
 # Vtubers Feed
 Daredemo Daisuki!
 
-## Website
+## Visit Our Homepage
 https://vtubersfeed.herokuapp.com/
 
-## Main Tech
+## Intro
+The app that does it all!
+### Main Tech
 React-native, ReactJS, ExpressJS
 ### Secondary Tech
-Expo, MongoDB
+Expo, MongoDB, Python
 
 ## File Structure
 React-native App:
