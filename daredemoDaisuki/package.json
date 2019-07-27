@@ -20,6 +20,7 @@
     "react-native-simple-twitter": "^2.3.0",
     "react-native-vector-icons": "^6.4.2",
     "react-navigation": "^3.9.1",
+    "react-navigation-collapsible": "^3.0.3",
     "react-navigation-transitions": "^1.0.10",
     "react-redux": "^6.0.0",
     "redux": "^4.0.1",

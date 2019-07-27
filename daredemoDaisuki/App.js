@@ -4,10 +4,14 @@ import { Provider } from 'react-redux';
 import { Root, Toast } from 'native-base';
 import { PersistGate } from 'redux-persist/integration/react';
 import * as Font from 'expo-font'
+import { setExpoStatusBarHeight } from 'react-navigation-collapsible';
+import { Constants } from 'expo';
 
 import { store } from './src/store/index.js';
 import { persistor } from './src/store/index.js';
 import AppContainer from './src/navigation/navigator.js';
+
+setExpoStatusBarHeight(Constants.statusBarHeight);
 
 export default class App extends React.Component {
   constructor(props) {
