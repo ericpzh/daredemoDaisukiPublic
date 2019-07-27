@@ -39,7 +39,7 @@ export const styles = (color = 'black') => StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'stretch',
-    borderWidth: .25,
+    borderBottomWidth: .25,
     backgroundColor: colorTheme[color].areaPrimary,
     borderColor: colorTheme[color].textQuaternary,
     paddingVertical: 10,

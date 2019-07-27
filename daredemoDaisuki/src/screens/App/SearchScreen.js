@@ -1,11 +1,15 @@
 import React from 'react';
-import {Text, View, TouchableOpacity, FlatList, Linking, Image, Modal, Dimensions, WebView, RefreshControl } from 'react-native';
+import { Text, View, TouchableOpacity, FlatList, Linking, Image, Modal, Dimensions, RefreshControl } from 'react-native';
 import { Badge as NBBadge, Container as NBContainer, Text as NBText, Tab as NBTab, Tabs as NBTabs, TabHeading as NBTabHeading, ScrollableTab as NBScrollableTab, Content as NBContent, ListItem as NBListItem, Left as NBLeft, Right as NBRight, Body as NBBody, Thumbnail as NBThumbnail, Spinner as NBSpinner, Button as NBButton, Toast as NBToast } from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
+import ImageViewer from 'react-native-image-zoom-viewer';
+import { Video } from 'expo-av';
+import { WebView } from 'react-native-webview';
+import { ScreenOrientation } from 'expo';
+import { Col, Row, Grid } from "react-native-easy-grid";
 
-import { colorTheme } from '../../styles/colorTheme.js';
-import { styles, fontsStyles } from '../../styles/App/searchScreenStyles.js';
+import { styles, fontsStyles, youtubeStyles, biliStyles, twitterStyles, themeColor } from '../../styles/App/searchScreenStyles.js';
 import { fetchImageBeginYoutube, fetchImageSuccessYoutube, fetchImageFailureYoutube, fetchImageBeginTwitter, fetchImageSuccessTwitter, fetchImageFailureTwitter, fetchImageBeginBili, fetchImageSuccessBili, fetchImageFailureBili, fetchVtubersBegin, fetchVtubersSuccess, fetchVtubersFailure } from '../../actions/vtuberActions.js';
 import { putSubscriptionsBegin, putSubscriptionsSuccess, putSubscriptionsFailure } from '../../actions/userActions.js';
 import { searchTab, searchVtuberRemove, fetchVtuberBegin, fetchVtuberSuccess, fetchVtuberFailure, fetchYoutubeBegin, fetchYoutubeSuccess, fetchYoutubeFailure, fetchTwitterBegin, fetchTwitterSuccess, fetchTwitterFailure, fetchbiliBegin, fetchbiliSuccess, fetchbiliFailure, searchTwitterEndReached, resetData } from '../../actions/searchActions.js';
@@ -69,12 +73,15 @@ class SearchScreen extends React.Component {
       fullscreenIdYoutube: "",
       webviewsYoutube: {},
       fullScreenUrl: "",
-      fullSreenType: "",
-      displayUrl: "",
-      fullscreenIdBili: "",
-      webviewsBili: {},
+      fullScreenUrlTwitter: "",
+      fullSreenTypeTwitter: "",
+      displayUrlTwitter: "",
     }
     this.parseTweet = this.parseTweet.bind(this);
+    this.changeScreenOrientation = this.changeScreenOrientation.bind(this);
+  }
+  async changeScreenOrientation(ori) {
+    await ScreenOrientation.lockAsync(ori);
   }
   componentDidMount(){
     if(willBlurSubscription){
@@ -115,7 +122,7 @@ class SearchScreen extends React.Component {
       })
     }
   }
-  parseTweet(data){
+  parseTweet(data,extendedTweet=false){
     /*
     Parse Tweet enable linking of tags/@
     */
@@ -128,7 +135,7 @@ class SearchScreen extends React.Component {
     var skipIdxs = {};//index to skip for,of loop
     if(data){//if data valid
       if(data.retweeted_status){//is retweet
-        ret = [ (this.parseTweet(data.retweeted_status)) ]; //directly show retweet obj.
+        ret = [ (this.parseTweet(data.retweeted_status,true)) ]; //directly show retweet obj.
       }else{//not retweet
         var dict = {}//dict of entities
         if(data.entities.hashtags){//#
@@ -151,7 +158,7 @@ class SearchScreen extends React.Component {
             }else if(url.display_url.includes("youtu.be/")){//normal youtube url
               dict[url.indices[0]] = {type:"media", url:url.display_url, mediaType:'youtubeLink', media_url:url.display_url, end:url.indices[1]}//put media in dict
             }else{//useless url
-              dict[url.indices[0]] = {type:"url", url:url.url, end:url.indices[1]}//put urls in dict
+              dict[url.indices[0]] = {type:"url", url:url.expanded_url, end:url.indices[1]}//put urls in dict
             }
           })
         }
@@ -175,11 +182,17 @@ class SearchScreen extends React.Component {
               skipIdxs[j] = 1;
             }
             if(media.type === 'video'){//if is mp4 video
-              obj = media.video_info.variants.filter((v)=>v.content_type === "video/mp4").sort((a,b)=>a.bitrate-b.bitrate);
+              obj = media.video_info.variants.filter((v)=>v.content_type === "video/mp4").sort((a,b)=>b.bitrate-a.bitrate);
               videoMp4 = obj && obj[0] ? obj[0].url : "";
               dict[media.indices[0]] = {type:"media", url:media.media_url, mediaType:"videomp4", preview:media.media_url, media_url:videoMp4, end:media.indices[1]}//put media in dict
             }else{
-              dict[media.indices[0]] = {type:"media", url:media.media_url, mediaType:media.type, media_url:media.media_url, end:media.indices[1]}//put media in dict
+              if(dict[media.indices[0]] && dict[media.indices[0]].mediaType === 'photos'){//if muti-image
+                dict[media.indices[0]].data.push({type:"media", url:media.media_url, mediaType:media.type, media_url:media.media_url, end:media.indices[1]});
+              }else if(dict[media.indices[0]] && dict[media.indices[0]].media_url !== media.media_url){
+                dict[media.indices[0]] = {type:"media", mediaType:'photos', data:[dict[media.indices[0]], {type:"media", url:media.media_url, mediaType:media.type, media_url:media.media_url, end:media.indices[1]}]};
+              }else{
+                dict[media.indices[0]] = {type:"media", url:media.media_url, mediaType:media.type, media_url:media.media_url, end:media.indices[1]}//put media in dict
+              }
             }
           })
         }
@@ -193,7 +206,7 @@ class SearchScreen extends React.Component {
         }
         if(data.in_reply_to_screen_name){//if is a reply
           text.push(
-            (<Text style={{color:'grey'}}> {"Replying to: "} </Text>)
+            (<Text style={[{color:'grey'},fontsStyles(this.props.user.font).text]} key={data.text + 'reply'}> {"Replying to: "} </Text>)
           );
         }
         var i = 0;
@@ -206,93 +219,388 @@ class SearchScreen extends React.Component {
                 <TouchableOpacity key={i + "hashtag"} onPress={()=>{
                   Linking.openURL("https://twitter.com/hashtag/"+entities[curr].text).catch((err) => console.error('An error occurred', err))
                 }}>
-                  <Text style={{color:'blue'}}>{"#" + dict[i].text}</Text>
+                  <Text style={fontsStyles(this.props.user.font).tag}>{"#" + dict[i].text}</Text>
                 </TouchableOpacity>);
             }else if(dict[i].type === 'mention'){//if is #
               text.push(
                 <TouchableOpacity key={i + "mention"} onPress={()=>{
                   Linking.openURL("https://twitter.com/"+entities[curr].screen_name).catch((err) => console.error('An error occurred', err))
                 }}>
-                  <Text style={{color:'blue'}}>{"@" + dict[i].screen_name}</Text>
+                  <Text style={fontsStyles(this.props.user.font).tag}>{"@" + dict[i].screen_name}</Text>
                 </TouchableOpacity>);
+            }else if(dict[i].type === 'url'){//if is link
+              if(!entities[curr].url.includes('twitter.com')){
+                text.push(
+                  <TouchableOpacity key={i + "url"} onPress={()=>{
+                    Linking.openURL(entities[curr].url).catch((err) => console.error('An error occurred', err))
+                  }}>
+                    <Text style={fontsStyles(this.props.user.font).link}>{dict[i].url}</Text>
+                  </TouchableOpacity>);
+              }
             }else if(dict[i].type === 'media'){//media
               if(dict[i].mediaType === "video"){//if is video
-                if(this.state.displayUrl === entities[curr].media_url){//enlarge a video
+                if(this.state.displayUrlTwitter === entities[curr].media_url){//enlarge a video
                   media.push(
-                    <View style={styles(this.props.user.colorTheme).listItemContentWebViewContainerTwitter}>
+                    <View style={twitterStyles(this.props.user.colorTheme).listItemContentWebViewContainer}>
                     <WebView
-                      style={styles(this.props.user.colorTheme).listItemContentImageTwitter}
+                      style={twitterStyles(this.props.user.colorTheme).listItemContentImage}
                       javaScriptEnabled={true}
                       domStorageEnabled={false}
-                      source={{uri: "https://www.youtube.com/embed/" + this.state.displayUrl.replace("youtu.be/","") }}
+                      source={{uri: "https://www.youtube.com/embed/" + this.state.displayUrlTwitter.replace("youtu.be/","") }}
                     />
                     </View>
                   )
                 }else{//video preview
                   media.push(
-                    <TouchableOpacity style={styles(this.props.user.colorTheme).listItemContentImageContainerTwitter} onPress={()=>{
-                      this.setState({displayUrl:entities[curr].media_url});
-                    }} key={entities[curr].preview + "photo"}>
-                      <Image style={styles(this.props.user.colorTheme).listItemContentImageTwitter} source={entities[curr].preview ? {uri: entities[curr].preview} : altImg}/>
+                    <TouchableOpacity style={twitterStyles(this.props.user.colorTheme).listItemContentImageContainer} onPress={()=>{
+                      this.setState({displayUrlTwitter:entities[curr].media_url});
+                    }} key={entities[curr].preview + "preview"}>
+                      <Image style={twitterStyles(this.props.user.colorTheme).listItemContentImage} source={entities[curr].preview ? {uri: entities[curr].preview} : altImg}/>
                     </TouchableOpacity>
                   )
                 }
               }else if(dict[i].mediaType === "videomp4"){//mp4 video
-                if(this.state.displayUrl === entities[curr].media_url){//enlarge a video
-                  media.push(
-                    <View style={styles(this.props.user.colorTheme).listItemContentWebViewContainerTwitter}>
-                      <WebView
-                        style={styles(this.props.user.colorTheme).listItemContentImageTwitter}
-                        javaScriptEnabled={true}
-                        domStorageEnabled={false}
-                        source={{uri: this.state.displayUrl }}
-                      />
-                    </View>
-                  )
-                }else{//video preview
-                  media.push(
-                    <TouchableOpacity style={styles(this.props.user.colorTheme).listItemContentImageContainerTwitter} onPress={()=>{
-                      this.setState({displayUrl:entities[curr].media_url});
-                    }} key={entities[curr].preview + "photo"}>
-                      <Image style={styles(this.props.user.colorTheme).listItemContentImageTwitter} source={entities[curr].preview ? {uri: entities[curr].preview} : altImg}/>
-                    </TouchableOpacity>
-                  )
-                }
+                hasVideo = false;
+                media=[(
+                  <View style={twitterStyles(this.props.user.colorTheme).listItemContentWebViewContainer} key={data.text + 'video container'}>
+                    <Video
+                      source={{ uri: entities[curr].media_url }}
+                      rate={1.0}
+                      volume={1.0}
+                      isMuted={false}
+                      useNativeControls={true}
+                      resizeMode="cover"
+                      shouldPlay={false}
+                      isLooping={false}
+                      usePoster={true}
+                      posterSource={{uri:entities[curr].preview}}
+                      onFullscreenUpdate={({fullscreenUpdate})=>{
+                        if(fullscreenUpdate === 0){//on fullscreen
+                          this.changeScreenOrientation(ScreenOrientation.OrientationLock.LANDSCAPE_LEFT);
+                        }else if (fullscreenUpdate === 3){//on fullscreen dismiss
+                          this.changeScreenOrientation(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+                        }
+                      }}
+                      style={twitterStyles(this.props.user.colorTheme).listItemContentVideo}
+                    />
+                  </View>
+                )];
               }else if(!hasVideo && dict[i].mediaType === "photo"){//if is image
                 media.push(
-                  <TouchableOpacity style={styles(this.props.user.colorTheme).listItemContentImageContainerTwitter} onPress={()=>{
-                    this.setState({fullScreenUrl: entities[curr].media_url,fullSreenType:"image"});
+                  <TouchableOpacity style={twitterStyles(this.props.user.colorTheme).listItemContentImageContainer} onPress={()=>{
+                    this.setState({fullScreenUrlTwitter: entities[curr].media_url,fullSreenTypeTwitter:"image"});
                   }} key={entities[curr].media_url + "photo"}>
-                    <Image style={styles(this.props.user.colorTheme).listItemContentImageTwitter} source={entities[curr].media_url ? {uri: entities[curr].media_url} : altImg}/>
+                    <Image style={twitterStyles(this.props.user.colorTheme).listItemContentImage} source={entities[curr].media_url ? {uri: entities[curr].media_url} : altImg}/>
                   </TouchableOpacity>
-              )}else if(dict[i].mediaType === "youtubeLink"){//youtube link
+              )}else if(!hasVideo && dict[i].mediaType === "photos") {
+                let uris = entities[curr].data.map(data => {return {url: data.media_url}});
+                switch (true) {
+                  case (uris.length <= 2)://o oo
+                    var imagestyle = twitterStyles(this.props.user.colorTheme).listItemContentImage;
+                    break;
+                  case (uris.length <= 4): //oo;oo
+                    var imagestyle = twitterStyles(this.props.user.colorTheme).listItemContentImage2;
+                    break;
+                  case (uris.length <= 9)://ooo;ooo;ooo
+                    var imagestyle = twitterStyles(this.props.user.colorTheme).listItemContentImage3;
+                    break;
+                  default:
+                    var imagestyle = twitterStyles(this.props.user.colorTheme).listItemContentImage;
+                    break;
+                }
+                entities[curr].data.forEach(val=>{
+                  media.push(
+                    <TouchableOpacity style={twitterStyles(this.props.user.colorTheme).listItemContentImageContainer} onPress={()=>{
+                      this.setState({fullScreenUrlTwitter: uris,fullSreenTypeTwitter:"images"});
+                    }} key={val.media_url + "photos"}>
+                      <Image style={ imagestyle } source={val.media_url ? {uri: val.media_url} : altImg}/>
+                    </TouchableOpacity>
+                );
+              });
+              }else if(dict[i].mediaType === "youtubeLink"){//youtube link
                 media.push(
                   <TouchableOpacity key={i + "mention"} onPress={()=>{
                     Linking.openURL("https://www.youtube.com/watch?v="+ entities[curr].media_url.replace("youtu.be/","")).catch((err) => console.error('An error occurred', err))
                   }}>
-                    <Text style={{color:'blue'}}>{dict[i].media_url}</Text>
+                    <Text style={[twitterStyles(this.props.user.colorTheme).listItemContentLink,fontsStyles(this.props.user.font).link]}>{dict[i].media_url}</Text>
                   </TouchableOpacity>);
               }else{//if is gif
-
+                //TODO: Android gif support
               }
             }
           }else{//normal char
-            !skipIdxs[i] && text.push(<Text key={i}>{char}</Text>);
+            !skipIdxs[i] && text.push(<Text key={i} style={fontsStyles(this.props.user.font).text} numberOfLines={1}>{char}</Text>);
           }
           i++;
         }
         ret.push(
-          <View style={styles(this.props.user.colorTheme).listItemContentTextTwitter} key={data.text + "textview"}>
+          <View style={twitterStyles(this.props.user.colorTheme).listItemContentText} key={data.text + "textview"}>
           {text}
           </View>
         );//Finished <Text/> part
-        ret.push(
-          <View style={styles(this.props.user.colorTheme).listItemContentMediaTwitter} key={data.text + "textview"}>
-          {media}
-          </View>
-        )
+        switch (media.length) {
+          case 1://o oo
+            var medias = media;
+            break;
+          case 2://o oo
+            var medias = (
+              <Grid>
+                <Col>
+                    {media[0]}
+                </Col>
+                <Col style={twitterStyles(this.props.user.colorTheme).listItemContentImageColBreak}/>
+                <Col>
+                    {media[1]}
+                </Col>
+              </Grid>
+            )
+            break;
+          case 3: //oo;oo
+            var medias = (
+              <Grid>
+                <Col>
+                  {media[0]}
+                </Col>
+                <Col style={twitterStyles(this.props.user.colorTheme).listItemContentImageColBreak}/>
+                <Col>
+                  <Row>
+                      {media[1]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[2]}
+                  </Row>
+                </Col>
+              </Grid>
+            )
+            break;
+          case 4: //oo;oo
+            var medias = (
+              <Grid>
+                <Col>
+                  <Row>
+                      {media[0]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[1]}
+                  </Row>
+                </Col>
+                <Col style={twitterStyles(this.props.user.colorTheme).listItemContentImageColBreak}/>
+                <Col>
+                  <Row>
+                      {media[2]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[3]}
+                  </Row>
+                </Col>
+              </Grid>
+            )
+            break;
+          case 5://ooo;ooo;ooo
+          var medias = (
+              <Grid>
+                <Col>
+                  <Row>
+                      {media[0]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[1]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[2]}
+                  </Row>
+                </Col>
+                <Col style={twitterStyles(this.props.user.colorTheme).listItemContentImageColBreak}/>
+                <Col>
+                  <Row>
+                      {media[3]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[4]}
+                  </Row>
+                </Col>
+              </Grid>
+            )
+            break;
+          case 6://ooo;ooo;ooo
+            var medias = (
+              <Grid>
+                <Col>
+                  <Row>
+                      {media[0]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[1]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[2]}
+                  </Row>
+                </Col>
+                <Col style={twitterStyles(this.props.user.colorTheme).listItemContentImageColBreak}/>
+                <Col>
+                  <Row>
+                      {media[3]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[4]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[5]}
+                  </Row>
+                </Col>
+              </Grid>
+            )
+            break;
+          case 7://ooo;ooo;ooo
+          var medias = (
+              <Grid>
+                <Col>
+                  <Row>
+                      {media[0]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[1]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[2]}
+                  </Row>
+                </Col>
+                <Col style={twitterStyles(this.props.user.colorTheme).listItemContentImageColBreak}/>
+                <Col>
+                  <Row>
+                      {media[3]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[4]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[5]}
+                  </Row>
+                </Col>
+                <Col style={twitterStyles(this.props.user.colorTheme).listItemContentImageColBreak}/>
+                <Col>
+                    {media[6]}
+                </Col>
+              </Grid>
+            )
+            break;
+          case 8://ooo;ooo;ooo
+            var medias = (
+              <Grid>
+                <Col>
+                  <Row>
+                      {media[0]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[1]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[2]}
+                  </Row>
+                </Col>
+                <Col style={twitterStyles(this.props.user.colorTheme).listItemContentImageColBreak}/>
+                <Col>
+                  <Row>
+                      {media[3]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[4]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[5]}
+                  </Row>
+                </Col>
+                <Col style={twitterStyles(this.props.user.colorTheme).listItemContentImageColBreak}/>
+                <Col>
+                  <Row>
+                      {media[6]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[7]}
+                  </Row>
+                </Col>
+              </Grid>
+            )
+            break;
+          case 9://ooo;ooo;ooo
+            var medias = (
+              <Grid>
+                <Col>
+                  <Row>
+                      {media[0]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[1]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[2]}
+                  </Row>
+                </Col>
+                <Col style={twitterStyles(this.props.user.colorTheme).listItemContentImageColBreak}/>
+                <Col>
+                  <Row>
+                      {media[3]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[4]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[5]}
+                  </Row>
+                </Col>
+                <Col style={twitterStyles(this.props.user.colorTheme).listItemContentImageColBreak}/>
+                <Col>
+                  <Row>
+                      {media[6]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[7]}
+                  </Row>
+                  <Row style={twitterStyles(this.props.user.colorTheme).listItemContentImageRowBreak}/>
+                  <Row>
+                      {media[8]}
+                  </Row>
+                </Col>
+              </Grid>
+            )
+            break;
+          default:
+            var medias = media;
+            break;
+        }
+        if(media.length > 0){
+          ret.push(
+            <View style={twitterStyles(this.props.user.colorTheme).listItemContentMedia} key={data.text + "medias"}>
+            {medias}
+            </View>
+          )
+        }
         if(data.quoted_status){//if have quoted
-          ret.push(this.parseTweet(data.quoted_status));//continue parse quote
+          ret.push(this.parseTweet(data.quoted_status,true));//continue parse quote
         }
         if(data.extended_tweet){//if have extended_tweet
           if(data.truncated){//if truncated
@@ -302,50 +610,63 @@ class SearchScreen extends React.Component {
       }
       var date = new Date(data.created_at);
       return (
-        <View style={styles(this.props.user.colorTheme).listItemTwitter} key={data.text + "wrapper"}>
-          <View style={styles(this.props.user.colorTheme).listItemHeaderTwitter}>
-            <TouchableOpacity onPress={() =>
-              {Linking.openURL("https://twitter.com/"+data.user.screen_name).catch((err) => console.error('An error occurred', err))}
+        <View style={
+          extendedTweet?
+          twitterStyles(this.props.user.colorTheme).listItemExtendedTweet:
+          twitterStyles(this.props.user.colorTheme).listItem }
+          key={data.text + "wrapper"}>
+          <View style={twitterStyles(this.props.user.colorTheme).listItemHeader}>
+
+            <TouchableOpacity
+              style={twitterStyles(this.props.user.colorTheme).listItemHeaderImageWrapper}
+              onPress={() =>
+                {Linking.openURL("https://twitter.com/"+data.user.screen_name).catch((err) => console.error('An error occurred', err))}
             }>
-              <NBThumbnail
-                style={styles(this.props.user.colorTheme).listItemHeaderImageTwitter}
+              <Image
+                style={twitterStyles(this.props.user.colorTheme).listItemHeaderImage}
                 source={data.user.profile_image_url.replace('_normal',"_bigger") ?{uri: data.user.profile_image_url.replace('_normal',"_bigger") }: altImg}
               />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() =>
-              {Linking.openURL("https://twitter.com/"+data.user.screen_name).catch((err) => console.error('An error occurred', err))}
+
+            <TouchableOpacity
+              style={twitterStyles(this.props.user.colorTheme).listItemHeaderTextWrapper}
+              onPress={() =>
+                {Linking.openURL("https://twitter.com/"+data.user.screen_name).catch((err) => console.error('An error occurred', err))}
             }>
-              <View style={styles(this.props.user.colorTheme).listItemHeaderTextWrapperTwitter}>
-                <Text style={styles(this.props.user.colorTheme).listItemHeaderTextTwitter}>{data.user.name}</Text>
-                <Text style={styles(this.props.user.colorTheme).listItemHeaderSubTextTwitter}>{data.user.screen_name}</Text>
-              </View>
+              <Text style={[twitterStyles(this.props.user.colorTheme).listItemHeaderText,fontsStyles(this.props.user.font).header]} numberOfLines={2}>{data.user.name}</Text>
+              <Text style={[twitterStyles(this.props.user.colorTheme).listItemHeaderSubText,fontsStyles(this.props.user.font).subheader]} numberOfLines={1}>{ '@' + data.user.screen_name}</Text>
             </TouchableOpacity>
+
           </View>
-          <View style={styles(this.props.user.colorTheme).listItemContentTwitter}>
+
+          <View style={twitterStyles(this.props.user.colorTheme).listItemContent}>
               { ret }
           </View>
-          <View style={styles(this.props.user.colorTheme).listItemFooterTwitter}>
-            <Text style={styles(this.props.user.colorTheme).listItemFooterTextTwitter}>
+
+          <View style={twitterStyles(this.props.user.colorTheme).listItemFooter}>
             {
-              date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate())  + ' ' +  (date.getHours().toString().length === 1?"0"+date.getHours().toString():date.getHours().toString()) + ':' + (date.getMinutes().toString().length === 1?"0"+date.getMinutes().toString():date.getMinutes().toString())
+              !extendedTweet && (
+              <Text style={[twitterStyles(this.props.user.colorTheme).listItemFooterText, fontsStyles(this.props.user.font).text]}>
+              {
+                date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate())  + ' ' +  (date.getHours().toString().length === 1?"0"+date.getHours().toString():date.getHours().toString()) + ':' + (date.getMinutes().toString().length === 1?"0"+date.getMinutes().toString():date.getMinutes().toString())
+              }
+              </Text> )
             }
-            </Text>
             {
-              (hasVideo && videoId !== "") || videoMp4 !== "" &&
-              <TouchableOpacity style={styles(this.props.user.colorTheme).listItemFooterButtonTwitter} onPress={()=>{
-                this.setState({fullScreenUrl: videoMp4 !== ""?videoMp4:'https://www.youtube.com/embed/' + videoId, fullSreenType:"video"});
+              hasVideo && videoId !== "" &&
+              <TouchableOpacity style={twitterStyles(this.props.user.colorTheme).listItemFooterButton} onPress={()=>{
+                this.setState({fullScreenUrlTwitter: videoMp4 !== ""?videoMp4:'https://www.youtube.com/embed/' + videoId, fullSreenTypeTwitter:"video"});
+                this.changeScreenOrientation(ScreenOrientation.OrientationLock.LANDSCAPE_LEFT);
               }}>
-                <Text style={styles(this.props.user.colorTheme).listItemFooterTextTwitter}> Full Screen </Text>
-                <Icon name='md-expand' size={14} style={styles(this.props.user.colorTheme).listItemFooterIconTwitter}/>
+                <Text style={[twitterStyles(this.props.user.colorTheme).listItemFooterText,fontsStyles(this.props.user.font).text]}> Full Screen </Text>
+                <Icon name='md-expand' size={14} style={twitterStyles(this.props.user.colorTheme).listItemFooterIcon}/>
               </TouchableOpacity>
             }
           </View>
         </View>
       );
     }
-
   }
-
   render() {
     var loading =
     (
@@ -363,58 +684,54 @@ class SearchScreen extends React.Component {
         <Modal
           animationType="slide"
           transparent={false}
-          visible={this.state.fullScreenUrl!==""}
-          onRequestClose={() => { this.setState({fullScreenUrl: ""}); }}
-          onDismiss={() => { this.setState({fullScreenUrl: ""}); }}
+          visible={this.state.fullscreenIdYoutube!==""}
+          onRequestClose={() => {
+            this.changeScreenOrientation(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+            this.setState({fullscreenIdYoutube: ""});
+          }}
+          onDismiss={() => {
+            this.changeScreenOrientation(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+            this.setState({fullscreenIdYoutube: ""});
+          }}
           >
-          <View style={styles(this.props.user.colorTheme).fullscreenContainer}>
+          <View style={youtubeStyles(this.props.user.colorTheme).fullscreenContainer}>
+            <WebView
+              style={youtubeStyles(this.props.user.colorTheme).fullscreen}
+              javaScriptEnabled={true}
+              domStorageEnabled={false}
+              source={{uri: 'https://www.youtube.com/embed/' + this.state.fullscreenIdYoutube }}
+            />
+          </View>
+        </Modal>
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.state.fullScreenUrlTwitter!==""}
+          onRequestClose={() => { this.setState({fullScreenUrlTwitter: ""}); this.changeScreenOrientation(ScreenOrientation.OrientationLock.PORTRAIT_UP);}}
+          onDismiss={() => { this.setState({fullScreenUrlTwitter: ""}); this.changeScreenOrientation(ScreenOrientation.OrientationLock.PORTRAIT_UP);}}
+          >
+          <View style={twitterStyles(this.props.user.colorTheme).fullscreenContainer}>
             {
-              this.state.fullSreenType === "image"
+              this.state.fullSreenTypeTwitter === "image"
               ?
               <ImageViewer imageUrls={[
-                {url:this.state.fullScreenUrl}
+                {url:this.state.fullScreenUrlTwitter}
               ]}/>
               :
-              <WebView
-                style={{transform: [{ rotate: '90deg'},{scaleX: height/width},{scaleY: height/width}]}}
-                scalesPageToFit={true}
-                javaScriptEnabled={true}
-                domStorageEnabled={false}
-                source={{uri: this.state.fullScreenUrl }}
-              />
+              (
+                this.state.fullSreenTypeTwitter === "images"
+                ?
+                <ImageViewer imageUrls={this.state.fullScreenUrlTwitter}/>
+                :
+                <WebView
+                  style={twitterStyles(this.props.user.colorTheme).fullscreen}
+                  scalesPageToFit={true}
+                  javaScriptEnabled={true}
+                  domStorageEnabled={false}
+                  source={{uri: this.state.fullScreenUrlTwitter }}
+                />
+              )
             }
-          </View>
-        </Modal>
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={this.state.fullscreenIdBili!==""}
-          onRequestClose={() => { this.setState({fullscreenIdBili: ""}); }}
-          onDismiss={() => { this.setState({fullscreenIdBili: ""}); }}
-          >
-          <View style={styles(this.props.user.colorTheme).fullscreenContainerBili}>
-          <WebView
-            style={{transform: [{ rotate: '90deg'},{scaleX: height/width},{scaleY: height/width}]}}
-            javaScriptEnabled={true}
-            domStorageEnabled={false}
-            source={{uri: 'https://www.bilibili.com/video/av' + this.state.fullscreenIdBili }}
-          />
-          </View>
-        </Modal>
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={this.state.fullscreenIdYoutube!==""}
-          onRequestClose={() => { this.setState({fullscreenIdYoutube: ""}); }}
-          onDismiss={() => { this.setState({fullscreenIdYoutube: ""}); }}
-          >
-          <View style={styles(this.props.user.colorTheme).fullscreenContainerYoutube}>
-          <WebView
-            style={{transform: [{ rotate: '90deg'},{scaleX: height/width},{scaleY: height/width}]}}
-            javaScriptEnabled={true}
-            domStorageEnabled={false}
-            source={{uri: 'https://www.youtube.com/embed/' + this.state.fullscreenIdYoutube }}
-          />
           </View>
         </Modal>
         <Modal
@@ -426,10 +743,14 @@ class SearchScreen extends React.Component {
           <View style={styles(this.props.user.colorTheme).modalContainer}><LoadingComponent duration={1000}/></View>
         </Modal>
         <NBTabs style={styles(this.props.user.colorTheme).tabs} renderTabBar={()=> <NBScrollableTab />} onChangeTab={({i}) => {this.props.searchTab(i)}}>
-          <NBTab heading={ <NBTabHeading style={styles(this.props.user.colorTheme).tab}><Icon name="md-heart"/>
-            <Text style={[fontsStyles(this.props.user.font).ui,styles(this.props.user.colorTheme).tabText]}>Vtubers</Text>
-          </NBTabHeading>}>
-          <FlatList
+          <NBTab heading={
+            <NBTabHeading style={this.props.search.tab === 0?styles(this.props.user.colorTheme).tabActive:styles(this.props.user.colorTheme).tab}>
+              <Icon color={this.props.search.tab === 0?themeColor('red'):themeColor('black')} name="md-heart"/>
+              <Text style={this.props.search.tab===0?[fontsStyles(this.props.user.font).ui,styles(this.props.user.colorTheme).tabText,{color:themeColor('red')}]:[fontsStyles(this.props.user.font).ui,styles(this.props.user.colorTheme).tabText]}>Vtubers</Text>
+            </NBTabHeading>}
+          >
+            <FlatList
+            initialNumToRender={20}
             data={this.props.search.vtubersData}
             renderItem={({item, index}) =>
             <NBListItem avatar key={index}>
@@ -474,11 +795,11 @@ class SearchScreen extends React.Component {
                   getAllVtubers([item.enname], this.props.fetchVtubersBegin,this.props.fetchVtubersSuccess,this.props.fetchVtubersFailure);
                 }
               }}>
-                <NBSpinner color={colorTheme[this.props.user.colorTheme].textPrimary} style={[{display:
+                <NBSpinner color={themeColor('red')} style={[{display:
                   this.props.user.subscriptionsLoading&&this.props.user.subscriptionsLoading[item.enname]?
                   'flex':'none'},
                   styles(this.props.user.colorTheme).listItemButtonIcon]}/>
-                <Icon name={this.props.user.subscriptions.includes(item.enname)?'md-heart-dislike':'md-heart'} size={20} style={[{display:
+                <Icon color={themeColor('red')} name={this.props.user.subscriptions.includes(item.enname)?'md-heart-dislike':'md-heart'} size={20} style={[{display:
                   !(this.props.user.subscriptionsLoading&&this.props.user.subscriptionsLoading[item.enname])?
                   'flex':'none'},
                   styles(this.props.user.colorTheme).listItemButtonIcon]}/>
@@ -522,21 +843,23 @@ class SearchScreen extends React.Component {
           </NBTab>
 
           <NBTab heading={
-            <NBTabHeading style={styles(this.props.user.colorTheme).tab}><Icon name="logo-youtube"/>
-              <Text style={[fontsStyles(this.props.user.font).ui,styles(this.props.user.colorTheme).tabText]}>Youtube</Text>
+            <NBTabHeading style={this.props.search.tab === 1?styles(this.props.user.colorTheme).tabActive:styles(this.props.user.colorTheme).tab}>
+              <Icon color={this.props.search.tab===1?'red':'black'} name="logo-youtube"/>
+              <Text style={this.props.search.tab===1?[fontsStyles(this.props.user.font).ui,styles(this.props.user.colorTheme).tabText,{color:'red'}]:[fontsStyles(this.props.user.font).ui,styles(this.props.user.colorTheme).tabText]}>Youtube</Text>
             </NBTabHeading>}>
               {
                 this.props.user.googleapikey === ""
                 ?
                 <View style={styles(this.props.user.colorTheme).buttonContainerYoutube}>
-                  <NBText>Setup Your</NBText>
+                  <NBText style={fontsStyles(this.props.user.font).ui}>Setup Your</NBText>
                   <NBButton transparent onPress={() => this.props.navigation.navigate('ManageAPIScreen')} style={styles(this.props.user.colorTheme).buttonYoutube}>
-                    <NBText style={styles(this.props.user.colorTheme).buttonTextYoutube}> Google API Key </NBText>
+                    <NBText style={[fontsStyles(this.props.user.font).ui, styles(this.props.user.colorTheme).buttonTextYoutube]}> Google API Key </NBText>
                   </NBButton>
-                  <NBText>Before Searching for Youtube Contents</NBText>
+                  <NBText style={fontsStyles(this.props.user.font).ui}>Before Searching for Youtube Contents</NBText>
                 </View>
                 :
                 <FlatList
+                  initialNumToRender={20}
                   ref={(ref) => { this.flatListRef = ref; }}
                   refreshControl={
                     <RefreshControl
@@ -545,23 +868,23 @@ class SearchScreen extends React.Component {
                     />
                   }
                   renderItem={({item, index}) => (
-                    <View key={index} style={styles(this.props.user.colorTheme).listItemYoutube}>
-                      <View style={styles(this.props.user.colorTheme).listItemHeaderYoutube}>
+                    <View key={index} style={youtubeStyles(this.props.user.colorTheme).listItem}>
+                      <View style={youtubeStyles(this.props.user.colorTheme).listItemHeader}>
                         <TouchableOpacity onPress={() =>
                           {Linking.openURL("https://www.youtube.com/watch?v="+item.videoId).catch((err) => console.error('An error occurred', err))}
-                        }>
-                          <View style={styles(this.props.user.colorTheme).listItemHeaderTextWrapperYoutube}>
-                            <Text style={styles(this.props.user.colorTheme).listItemHeaderTextYoutube}>{item.title}</Text>
-                            <Text style={styles(this.props.user.colorTheme).listItemHeaderSubTextYoutube}>{item.vtubername}</Text>
-                          </View>
+                          }
+                          style={youtubeStyles(this.props.user.colorTheme).listItemHeaderTextWrapper}
+                        >
+                          <Text numberOfLines={2} style={[youtubeStyles(this.props.user.colorTheme).listItemHeaderText,fontsStyles(this.props.user.font).header]}>{item.title}</Text>
+                          <Text numberOfLines={1} style={[youtubeStyles(this.props.user.colorTheme).listItemHeaderSubText,fontsStyles(this.props.user.font).subheader]}>{item.vtubername}</Text>
                         </TouchableOpacity>
                       </View>
-                      <View style={styles(this.props.user.colorTheme).listItemContentYoutube}>
+                      <View style={youtubeStyles(this.props.user.colorTheme).listItemContent}>
                         {
                           this.state.webviewsYoutube[item.title]
                           ?
                           <WebView
-                            style={[{width:width-50,height:(width-50)/16*9},styles(this.props.user.colorTheme).listItemContentVideoYoutube]}
+                            style={youtubeStyles(this.props.user.colorTheme).listItemContentVideo}
                             javaScriptEnabled={true}
                             domStorageEnabled={false}
                             source={{uri: 'https://www.youtube.com/embed/' + item.videoId }}
@@ -569,24 +892,25 @@ class SearchScreen extends React.Component {
                           :
                           <TouchableOpacity onPress={()=>{
                             var webviewsYoutube = this.state.webviewsYoutube;
-                            webviewsYoutube[item.title] = true;
+                            webviewsYoutube[item.title] = 1;
                             this.setState({webviewsYoutube: webviewsYoutube});
                           }}>
                             <Image
-                              style={[{width:width-50,height:(width-50)/16*9},styles(this.props.user.colorTheme).listItemContentImageYoutube]}
+                              style={youtubeStyles(this.props.user.colorTheme).listItemContentImage}
                               source={item.image?{uri:item.image}:altImg}
                             />
                           </TouchableOpacity>
                         }
                       </View>
-                      <View style={styles(this.props.user.colorTheme).listItemFooterYoutube}>
-                        <Text style={styles(this.props.user.colorTheme).listItemFooterTextYoutube}>{item.displaytime}</Text>
-                          <TouchableOpacity style={styles(this.props.user.colorTheme).listItemFooterButtonYoutube} onPress={()=>{
-                            this.setState({fullscreenIdYoutube:item.videoId})
-                          }}>
-                            <Text style={styles(this.props.user.colorTheme).listItemFooterTextYoutube}> Full Screen </Text>
-                            <Icon name='md-expand' size={14} style={styles(this.props.user.colorTheme).listItemFooterIconYoutube}/>
-                          </TouchableOpacity>
+                      <View style={youtubeStyles(this.props.user.colorTheme).listItemFooter}>
+                        <Text style={[youtubeStyles(this.props.user.colorTheme).listItemFooterText,fontsStyles(this.props.user.font).text]}>{item.displaytime}</Text>
+                        <TouchableOpacity style={youtubeStyles(this.props.user.colorTheme).listItemFooterButton} onPress={()=>{
+                          this.setState({fullscreenIdYoutube:item.videoId});
+                          this.changeScreenOrientation(ScreenOrientation.OrientationLock.LANDSCAPE_LEFT);
+                        }}>
+                          <Text style={[youtubeStyles(this.props.user.colorTheme).listItemFooterButtonText,fontsStyles(this.props.user.font).text]}> Full Screen </Text>
+                          <Icon name='md-expand' size={14} style={youtubeStyles(this.props.user.colorTheme).listItemFooterButtonIcon}/>
+                        </TouchableOpacity>
                       </View>
                     </View>
                   )}
@@ -594,125 +918,98 @@ class SearchScreen extends React.Component {
                   keyExtractor={(item, index) => item + index}
                   ListFooterComponent={
                     this.props.search.youtubeData.length > 0 && (
-                      <TouchableOpacity style={styles(this.props.user.colorTheme).listFooterYoutube} onPress={() => this.onEndReached()}>
-                        <Text style={fontsStyles(this.props.user.font).ui}>Load More</Text>
+                      <TouchableOpacity style={youtubeStyles(this.props.user.colorTheme).listFooter} onPressed={() => this.onEndReached()}>
+                        <Text style={fontsStyles(this.props.user.font).text}>Load More</Text>
                       </TouchableOpacity>
                     )
                   }
-                  onEndReached={() => this.onEndReached()}
+                  onEndReached={() => searchVideo(this.props.search.value, this.props.user.googleapikey, this.props.fetchYoutubeBegin, this.props.fetchYoutubeSuccess, this.props.fetchYoutubeFailure, this.props.search.nextPageTokenYoutube)}
                   onEndReachedThreshold={0.05}
                   />
               }
           </NBTab>
 
           <NBTab heading={
-            <NBTabHeading style={styles(this.props.user.colorTheme).tab}><Icon name="md-tv"/>
-            <Text style={[fontsStyles(this.props.user.font).ui,styles(this.props.user.colorTheme).tabText]}>Bilibili</Text>
+            <NBTabHeading style={this.props.search.tab === 2?styles(this.props.user.colorTheme).tabActive:styles(this.props.user.colorTheme).tab}>
+            <Icon color={this.props.search.tab===2?'pink':'black'} name="md-tv"/>
+            <Text style={this.props.search.tab===2?[fontsStyles(this.props.user.font).ui,styles(this.props.user.colorTheme).tabText,{color:'pink'}]:[fontsStyles(this.props.user.font).ui,styles(this.props.user.colorTheme).tabText]}>Bilibili</Text>
           </NBTabHeading>}>
-          <FlatList
-            ref={(ref) => { this.flatListRef = ref; }}
-            refreshControl={
-              <RefreshControl
-                refreshing={false}
-                onRefresh={this.onRefresh}
-              />
-            }
-            renderItem={({item, index}) => (
-                <View key={index} style={styles(this.props.user.colorTheme).listItemBili}>
-                  <View style={styles(this.props.user.colorTheme).listItemHeaderBili}>
-                    <TouchableOpacity onPress={() =>
-                      {Linking.openURL("https://www.bilibili.com/video/av"+item.aid).catch((err) => console.error('An error occurred', err))}
-                    }>
-                      <View style={styles(this.props.user.colorTheme).listItemHeaderTextWrapperBili}>
-                        <Text style={styles(this.props.user.colorTheme).listItemHeaderTextBili}>{item.title}</Text>
-                        <Text style={styles(this.props.user.colorTheme).listItemHeaderSubTextBili}>{item.name}</Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={styles(this.props.user.colorTheme).listItemContentBili}>
-                    {
-                      this.state.webviewsBili[item.title]
-                      ?
-                      <WebView
-                        style={[{width:width-50,height:(width-50)/16*9},styles(this.props.user.colorTheme).listItemContentVideoBili]}
-                        javaScriptEnabled={true}
-                        domStorageEnabled={false}
-                        source={{uri: 'https://www.bilibili.com/video/av' + item.aid }}
-                      />
-                      :
+            <FlatList
+              initialNumToRender={20}
+              ref={(ref) => { this.flatListRef = ref; }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={false}
+                  onRefresh={this.onRefresh}
+                />
+              }
+              renderItem={({item, index}) => (
+                 <View>
+                  <View key={index} style={biliStyles(this.props.user.colorTheme).listItem}>
+                    <View style={biliStyles(this.props.user.colorTheme).listItemHeader}>
+                      <TouchableOpacity onPress={() =>
+                        {Linking.openURL("https://www.bilibili.com/video/av"+item.aid).catch((err) => console.error('An error occurred', err))}
+                        }
+                        style={biliStyles(this.props.user.colorTheme).listItemHeaderTextWrapper}
+                      >
+                        <Text numberOfLines={2} style={[biliStyles(this.props.user.colorTheme).listItemHeaderText,fontsStyles(this.props.user.font).headercn]}>{item.title}</Text>
+                        <Text numberOfLines={1} style={[biliStyles(this.props.user.colorTheme).listItemHeaderSubText,fontsStyles(this.props.user.font).subheadercn]}>{item.name}</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <View style={biliStyles(this.props.user.colorTheme).listItemContent}>
                       <TouchableOpacity onPress={()=>{
-                        var webviewsBili = this.state.webviewsBili;
-                        webviewsBili[item.title] = true;
-                        this.setState({webviewsBili: webviewsBili });
+                        Linking.openURL("https://www.bilibili.com/video/av"+item.aid).catch((err) => console.error('An error occurred', err))
                       }}>
                         <Image
-                          style={[{width:width-50,height:(width-50)/16*9},styles(this.props.user.colorTheme).listItemContentImageBili]}
+                          style={biliStyles(this.props.user.colorTheme).listItemContentImage}
                           source={item.image?{uri:item.image}:altImg}
                         />
                       </TouchableOpacity>
-                    }
-                  </View>
-                  <View style={styles(this.props.user.colorTheme).listItemFooterBili}>
-                    <Text style={styles(this.props.user.colorTheme).listItemFooterTextBili}>{item.displaytime}</Text>
-                      <TouchableOpacity style={styles(this.props.user.colorTheme).listItemFooterButtonBili} onPress={()=>{
-                        this.setState({fullscreenIdBili:item.aid})
-                      }}>
-                        <Text style={styles(this.props.user.colorTheme).listItemFooterTextBili}> Full Screen </Text>
-                        <Icon name='md-expand' size={14} style={styles(this.props.user.colorTheme).listItemFooterIconBili}/>
-                      </TouchableOpacity>
+                    </View>
+                    <View style={biliStyles(this.props.user.colorTheme).listItemFooter}>
+                      <Text style={[biliStyles(this.props.user.colorTheme).listItemFooterText,fontsStyles(this.props.user.font).textcn]}>{item.displaytime}</Text>
+                    </View>
                   </View>
                 </View>
-            )}
-            data = {this.props.search.biliData}
-            keyExtractor={(item, index) => item + index}
-            ListFooterComponent={
-              this.props.search.biliData.length > 0 && (
-                <TouchableOpacity style={styles(this.props.user.colorTheme).listFooterBili} onPress={() => this.onEndReached()}>
-                  <Text style={fontsStyles(this.props.user.font).ui}>Load More</Text>
-                </TouchableOpacity>
-              )
-            }
-            onEndReached={() => queryVideo(this.props.search.value, this.props.fetchbiliBegin, this.props.fetchbiliSuccess, this.props.fetchbiliFailure, this.props.search.pageBili)}
-            onEndReachedThreshold={0.05}
-            />
+              )}
+              data = {this.props.search.biliData.sort(function(a,b){return b.time - a.time})}
+              keyExtractor={(item, index) => item + index}
+              ListFooterComponent={
+                this.props.search.biliData.length > 0 && (
+                  <TouchableOpacity style={biliStyles(this.props.user.colorTheme).listFooter} onPress={() => this.onEndReached()}>
+                    <Text style={fontsStyles(this.props.user.font).textcn}>Load More</Text>
+                  </TouchableOpacity>
+                )
+              }
+              onEndReached={() => queryVideo(this.props.search.value, this.props.fetchbiliBegin, this.props.fetchbiliSuccess, this.props.fetchbiliFailure, this.props.search.pageBili)}
+              onEndReachedThreshold={0.05}
+              />
           </NBTab>
 
-          <NBTab heading={ <NBTabHeading style={styles(this.props.user.colorTheme).tab}><Icon name="logo-twitter"/><Text style={[fontsStyles(this.props.user.font).ui,styles(this.props.user.colorTheme).tabText]}>Twitter</Text></NBTabHeading>}>
-              <FlatList
-                data = {
-                    this.props.search.twitterData
-                    .sort((a,b)=>{
-                      return new Date(b.created_at) - new Date(a.created_at);
-                    })
-                    .slice(0, this.props.search.twitterlimit)
-                  }
-                renderItem={({item, index}) => {
-                    return (
-                      <View key={index}>
-                        {this.parseTweet(item)}
-                      </View>
-                    )
-                  }
+          <NBTab heading={
+            <NBTabHeading style={this.props.search.tab === 3?styles(this.props.user.colorTheme).tabActive:styles(this.props.user.colorTheme).tab}>
+              <Icon color={this.props.search.tab===3?'#6495ED':'black'} name="logo-twitter"/>
+              <Text style={this.props.search.tab===3?[fontsStyles(this.props.user.font).ui,styles(this.props.user.colorTheme).tabText,{color:'#6495ED'}]:[fontsStyles(this.props.user.font).ui,styles(this.props.user.colorTheme).tabText]}>Twitter</Text>
+            </NBTabHeading>
+          }>
+            <FlatList
+              initialNumToRender={20}
+              data = {
+                  this.props.search.twitterData
+                  .sort((a,b)=>{
+                    return new Date(b.created_at) - new Date(a.created_at);
+                  })
                 }
-                keyExtractor={(item, index) => item + index}
-                ListFooterComponent={
-                  (
-                    <TouchableOpacity style={styles(this.props.user.colorTheme).listFooterTwitter} onPress={() => {
-                      this.props.searchTwitterEndReached();
-                    }}>
-                    {
-                      this.props.search.twitterData.length > 0?
-                      <Text style={fontsStyles(this.props.user.font).ui}>Load More</Text>:
-                      <View/>
-                    }
-                    </TouchableOpacity>
+              renderItem={({item, index}) => {
+                  return (
+                    <View key={index}>
+                      {this.parseTweet(item)}
+                    </View>
                   )
                 }
-                onEndReached={() => {
-                  this.props.searchTwitterEndReached();
-                }}
-                onEndReachedThreshold={0.05}
-                />
+              }
+              keyExtractor={(item, index) => item + index}
+              />
           </NBTab>
         </NBTabs>
       </NBContainer>

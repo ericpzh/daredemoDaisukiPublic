@@ -1,12 +1,13 @@
 import React from 'react';
-import { Text, View, FlatList, Image, RefreshControl, TouchableOpacity, Modal, Linking } from 'react-native';
+import { Text, View, FlatList, Image, RefreshControl, TouchableOpacity, Modal, Linking, Animated } from 'react-native';
 import { Thumbnail as NBThumbnail, ActionSheet as NBActionSheet, Fab as NBFab, Toast as NBToast } from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
 import { WebView } from 'react-native-webview';
 import { ScreenOrientation } from 'expo';
+import { withCollapsible } from 'react-navigation-collapsible';
 
-import { styles, fontsStyles } from '../../../styles/App/Home/biliScreenStyles.js';
+import { styles, fontsStyles, colors } from '../../../styles/App/Home/biliScreenStyles.js';
 import altImg from '../../../assets/altImg.jpg';
 import { getAccount, getLiveAccount, getSubmitVideos } from '../../../api/bilibili.js';
 import { fetchImageBeginBili, fetchImageSuccessBiliScreen, fetchImageFailureBili } from '../../../actions/vtuberActions.js';
@@ -15,6 +16,9 @@ import { filterChanged, reset, init, fetchLiveBegin, fetchLiveSuccess, fetchLive
 import  LoadingComponent  from '../../../assets/loading.js';
 import { setPrevScreen } from '../../../actions/globalActions.js';
 import Tutorial from './Tutorial.js';
+import { collapsibleParams } from './AppHeader.js'
+
+const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
 const mapStateToProps = (state) => {
   const { bili, user, vtuber, global } = state
@@ -38,6 +42,10 @@ const mapDispatchToProps = dispatch => ({
 });
 
 class BiliScreen extends React.Component {
+  static navigationOptions = {
+    headerTitle: (<View/>)
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -62,14 +70,14 @@ class BiliScreen extends React.Component {
     */
     const now = Date.now();//clicked time
     const DOUBLE_PRESS_DELAY = 1000;//if 2 click within x sec
-    if (this.state.lastTap && (now - this.state.lastTap) < DOUBLE_PRESS_DELAY && this.props.bili.account.length > 0) {//if 2 clicks within x sec & length > 0
-      this.flatListRef.scrollToOffset({ animated: true, offset: 0 });//scroll to top
+    if (this.state.lastTap && (now - this.state.lastTap) < DOUBLE_PRESS_DELAY && this.props.bili.videos.length > 0) {//if 2 clicks within x sec & length > 0
+      this.flatListRef.getNode().scrollToOffset({ animated: true, offset: 0 });//scroll to top
     } else {
       this.setState({lastTap : now});//update last tap time
     }
   }
   tabOnPressCallback(){
-    this.flatListRef.scrollToOffset({ animated: true, offset: 0 });//scroll to top
+    this.flatListRef.getNode().scrollToOffset({ animated: true, offset: 0 });//scroll to top
   }
   componentDidMount(){
     if(willBlurSubscription){
@@ -222,6 +230,7 @@ class BiliScreen extends React.Component {
     }
   }
   render() {
+    const { paddingHeight, animatedY, onScroll } = this.props.collapsible;
     return (
       <View style={styles(this.props.user.colorTheme).container}>
         <Modal
@@ -238,8 +247,12 @@ class BiliScreen extends React.Component {
             ?
             <Tutorial/>
             :
-            <FlatList
-              ref={(ref) => { this.flatListRef = ref; }}
+            <AnimatedFlatList
+              ref={r => (this.flatListRef = r)}
+              contentContainerStyle={{paddingTop: paddingHeight}}
+              scrollIndicatorInsets={{top: paddingHeight}}
+              onScroll={onScroll}
+              _mustAddThis={animatedY}
               refreshControl={
                 <RefreshControl
                   refreshing={false}
@@ -337,7 +350,7 @@ class BiliScreen extends React.Component {
   }
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(BiliScreen)
+export default connect(mapStateToProps,mapDispatchToProps)(withCollapsible(BiliScreen, collapsibleParams))
 /*
 //Invalid Video API
 

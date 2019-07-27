@@ -1,9 +1,19 @@
 import { StyleSheet } from 'react-native';
 
 import { colorTheme } from '../colorTheme.js'
+export const themeColor = (color) => colorTheme[color].themeColor;
 
 import { fonts } from '../fonts.js';
 export const fontsStyles = fonts;
+
+import { styles as youtubeScreenStyles } from './Home/youtubeScreenStyles.js';
+export const youtubeStyles = youtubeScreenStyles;
+
+import { styles as biliScreenStyles } from './Home/biliScreenStyles.js';
+export const biliStyles =  biliScreenStyles;
+
+import { styles as twitterScreenStyles } from './Home/twitterScreenStyles.js';
+export const twitterStyles = twitterScreenStyles;
 
 export const styles = (color = 'black') => StyleSheet.create({
   fullscreenContainer:{
@@ -28,6 +38,9 @@ export const styles = (color = 'black') => StyleSheet.create({
   },
   tab:{
     backgroundColor: colorTheme[color].areaSecondary,
+  },
+  tabActive:{
+    backgroundColor: '#f4f4f4',
   },
   tags:{
     flex: 1,
@@ -90,300 +103,5 @@ export const styles = (color = 'black') => StyleSheet.create({
   buttonTextYoutube:{
     color: '#2554C7',
     fontSize: 20,
-  },
-  fullscreenContainerYoutube:{
-    backgroundColor: colorTheme[color].areaQuinary,
-    flex: 1,
-  },
-  containerYoutube: {
-    flex: 1,
-    backgroundColor: colorTheme[color].areaPrimary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerContainerYoutube: {
-    marginTop: 30,
-    width: "100%",
-    backgroundColor: colorTheme[color].areaSecondary
-  },
-  listContainerYoutube: {
-    alignItems: 'stretch'
-  },
-  listItemYoutube:{
-    alignSelf: 'stretch',
-    paddingTop: 15,
-    paddingBottom: 15,
-    paddingLeft: 25,
-    paddingRight: 25,
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'stretch',
-    borderBottomColor: colorTheme[color].areaSecondary,
-    borderBottomWidth: 1,
-  },
-  listItemHeaderYoutube:{
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  listItemHeaderTextWrapperYoutube:{
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    marginRight: 40,
-    marginLeft: 10,
-  },
-  listItemContentYoutube:{
-    flex: 1,
-    marginTop: 5,
-    overflow: 'hidden',
-  },
-  listItemFooterYoutube:{
-    flex: 1,
-    marginTop: 10,
-    flexDirection:"row",
-    alignItems: 'flex-end',
-    justifyContent:"space-between",
-  },
-  listItemHeaderImageYoutube:{
-    width: 50,
-    height: 50
-  },
-  listItemHeaderTextYoutube:{
-    color: colorTheme[color].textPrimary,
-    fontSize: 15
-  },
-  listItemHeaderSubTextYoutube:{
-    color: colorTheme[color].textSecondary,
-    fontSize: 12
-  },
-  listItemContentImageYoutube:{
-    marginTop: 10,
-  },
-  listItemFooterTextYoutube:{
-    color: colorTheme[color].textTertiary,
-    fontSize: 12
-  },
-  listItemFooterButtonYoutube:{
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "flex-end"
-  },
-  listItemFooterIconYoutube:{
-    paddingLeft: 7,
-  },
-  listFooterYoutube:{
-    flex: 1,
-    paddingVertical: 10,
-    width: "100%",
-    flexDirection:"row",
-    justifyContent:"center",
-    alignItems:"center",
-    color: colorTheme[color].textQuaternary,
-  },
-  listItemContentVideoYoutube:{
-    marginTop: 10,
-  },
-
-  fullscreenContainerBili:{
-    backgroundColor: colorTheme[color].areaQuinary,
-    flex: 1,
-  },
-  containerBili: {
-    flex: 1,
-    backgroundColor: colorTheme[color].areaPrimary,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  headerContainerBili: {
-    marginTop: 30,
-    width: "100%",
-    backgroundColor: colorTheme[color].areaSecondary
-  },
-  listContainerBili: {
-    flex: 1,
-    alignItems: 'stretch'
-  },
-  listItemBili:{
-    alignSelf: 'stretch',
-    paddingTop: 15,
-    paddingBottom: 15,
-    paddingLeft: 25,
-    paddingRight: 25,
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'stretch',
-    borderBottomColor: colorTheme[color].areaSecondary,
-    borderBottomWidth: 1,
-  },
-  listItemHeaderBili:{
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  listItemHeaderTextWrapperBili:{
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    marginRight: 40,
-    marginLeft: 10,
-  },
-  listItemContentBili:{
-    flex: 1,
-    marginTop: 5,
-    overflow: 'hidden',
-  },
-  listItemFooterBili:{
-    flex: 1,
-    marginTop: 10,
-    flexDirection:"row",
-    alignItems: 'flex-end',
-    justifyContent:"space-between",
-  },
-  listItemHeaderImageBili:{
-    width: 50,
-    height: 50
-  },
-  listItemHeaderTextBili:{
-    color: colorTheme[color].textPrimary,
-    fontSize: 15
-  },
-  listItemHeaderSubTextBili:{
-    color: colorTheme[color].textSecondary,
-    fontSize: 12
-  },
-  listItemContentImageBili:{
-    marginTop: 10,
-  },
-  listItemFooterTextBili:{
-    color: colorTheme[color].textTertiary,
-    fontSize: 12
-  },
-  listItemFooterButtonBili:{
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "flex-end"
-  },
-  listItemFooterIconBili:{
-    paddingLeft: 7,
-  },
-  listFooterBili:{
-    flex: 1,
-    paddingVertical: 10,
-    width: "100%",
-    flexDirection:"row",
-    justifyContent:"center",
-    alignItems:"center",
-    color: colorTheme[color].textQuaternary,
-  },
-  listItemContentVideoBili:{
-    marginTop: 10,
-  },
-
-
-  headerContainerTwitter: {
-    marginTop: 30,
-    width: "100%",
-    backgroundColor: colorTheme[color].areaSecondary,
-  },
-  listContainerTwitter: {
-    alignItems: 'stretch'
-  },
-  listItemTwitter:{
-    alignSelf: 'stretch',
-    paddingTop: 15,
-    paddingBottom: 15,
-    paddingLeft: 15,
-    paddingRight: 15,
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'stretch',
-    borderColor: colorTheme[color].areaSecondary,
-    borderRadius: 5,
-    borderWidth: .25,
-  },
-  listItemContentTextTwitter:{
-    flex:1,
-    flexDirection:'row',
-    flexWrap: 'wrap',
-    paddingTop: 10,
-  },
-  listItemContentMediaTwitter:{
-    flex:1,
-    flexDirection:'row',
-    flexWrap: 'wrap',
-    paddingTop: 10,
-    paddingBottom: 10,
-  },
-  listItemHeaderTwitter:{
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    marginBottom: 5,
-  },
-  listItemHeaderTextWrapperTwitter:{
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    marginRight: 40,
-    marginLeft: 10,
-    flex: 1,
-  },
-  listItemContentTwitter:{
-    flex: 1,
-  },
-  listItemFooterTwitter:{
-    flex: 1,
-    flexDirection:"row",
-    alignItems: 'flex-end',
-    justifyContent:"space-between",
-    marginTop: 5,
-  },
-  listItemHeaderImageTwitter:{
-    width: 50,
-    height: 50
-  },
-  listItemHeaderTextTwitter:{
-    color: colorTheme[color].textPrimary,
-    fontSize: 15
-  },
-  listItemHeaderSubTextTwitter:{
-    color: colorTheme[color].textSecondary,
-    fontSize: 12
-  },
-  listItemContentImageContainerTwitter:{
-    flex: 1,
-  },
-  listItemContentWebViewContainerTwitter:{
-    overflow:'hidden',
-    flex: 1
-  },
-  listItemContentImageTwitter:{
-    flex: 1,
-    width: "100%",
-    height: 200,
-    paddingTop: 10,
-    paddingBottom: 10,
-  },
-  listItemFooterTextTwitter:{
-    color: colorTheme[color].textTertiary,
-    fontSize: 12
-  },
-  listItemFooterButtonTwitter:{
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "flex-end"
-  },
-  listItemFooterIconTwitter:{
-    paddingLeft: 7,
-  },
-  listFooterTwitter:{
-    flex: 1,
-    paddingBottom: 10,
-    width: "100%",
-    flexDirection:"row",
-    justifyContent:"center",
-    alignItems:"center",
-    color: colorTheme[color].textQuaternary,
   },
 });

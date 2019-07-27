@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, FlatList, Image, RefreshControl, TouchableOpacity, Modal, Linking, Dimensions, WebView } from 'react-native';
+import { Text, View, FlatList, Image, RefreshControl, TouchableOpacity, Modal, Linking, Dimensions, WebView, Animated } from 'react-native';
 import { ActionSheet as NBActionSheet, Fab as NBFab, Toast as NBToast } from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
@@ -7,7 +7,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import { Video } from 'expo-av';
 import { ScreenOrientation } from 'expo';
 import { Col, Row, Grid } from "react-native-easy-grid";
-//import { WebView } from 'react-native-webview';
+import { withCollapsible } from 'react-navigation-collapsible';
 
 import { styles, fontsStyles } from '../../../styles/App/Home/twitterScreenStyles.js';
 import { getTimeline } from  '../../../api/twitter.js';
@@ -16,6 +16,9 @@ import { filterChanged, reset, init, fetchTimelineBegin, fetchTimelineSuccess, f
 import  LoadingComponent  from '../../../assets/loading.js';
 import { setPrevScreen } from '../../../actions/globalActions.js';
 import Tutorial from './Tutorial.js';
+import { collapsibleParams } from './AppHeader.js'
+
+const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
 const mapStateToProps = (state) => {
   const {  user, vtuber, twitter, global } = state
@@ -61,13 +64,13 @@ class TwitterScreen extends React.Component {
     const now = Date.now();//clicked time
     const DOUBLE_PRESS_DELAY = 1000;//if 2 click within x sec
     if (this.state.lastTap && (now - this.state.lastTap) < DOUBLE_PRESS_DELAY && this.props.twitter.tweets.length > 0) {//if 2 clicks within x sec
-      this.flatListRef.scrollToOffset({ animated: true, offset: 0 });//scroll to top
+      this.flatListRef.getNode().scrollToOffset({ animated: true, offset: 0 });//scroll to top
     } else {
       this.setState({lastTap : now});//update last tap time
     }
   }
   tabOnPressCallback(){
-    this.flatListRef.scrollToOffset({ animated: true, offset: 0 });//scroll to top
+    this.flatListRef.getNode().scrollToOffset({ animated: true, offset: 0 });//scroll to top
   }
   componentDidMount(){
     if(willBlurSubscription){
@@ -103,8 +106,7 @@ class TwitterScreen extends React.Component {
     if(
       nextState !== this.state ||
       nextProps.twitter.tweets !== this.props.twitter.tweets ||
-      nextProps.twitter.group !== this.props.twitter.group ||
-      nextProps.twitter.limit !== this.props.twitter.limit
+      nextProps.twitter.group !== this.props.twitter.group
     ){
       return true;
     }
@@ -747,9 +749,9 @@ class TwitterScreen extends React.Component {
         </View>
       );
     }
-
   }
   render() {
+    const { paddingHeight, animatedY, onScroll } = this.props.collapsible;
     var {height, width} = Dimensions.get('window');
     var maxMinDates = new Date("July 1, 1970");
     let oldDate = new Date("July 1, 1970");;
@@ -805,8 +807,12 @@ class TwitterScreen extends React.Component {
             ?
             <Tutorial/>
             :
-            <FlatList
-              ref={(ref) => { this.flatListRef = ref; }}
+            <AnimatedFlatList
+              ref={r => ( this.flatListRef = r) }
+              contentContainerStyle={{paddingTop: paddingHeight}}
+              scrollIndicatorInsets={{top: paddingHeight}}
+              onScroll={onScroll}
+              _mustAddThis={animatedY}
               refreshControl={
                 <RefreshControl
                   refreshing={false}
@@ -854,4 +860,4 @@ class TwitterScreen extends React.Component {
   }
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(TwitterScreen)
+export default connect(mapStateToProps,mapDispatchToProps)(withCollapsible(TwitterScreen, collapsibleParams))

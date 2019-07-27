@@ -6,8 +6,6 @@ import { SEARCH_RESET, SEARCH_VALUE, SEARCHTAB, SEARCH_RESET_DATA, SEARCH_VTUBER
   SEARCH_TWITTER_END_REACHED,
 } from '../store/type.js';
 
-const perPage = 10;
-
 const initState = {
   youtubeData: [],
   vtubersData: [],
@@ -20,7 +18,6 @@ const initState = {
   nextPageTokenYoutube: "",
   pageVtuber: 0,
   pageBili: 1,
-  twitterlimit: perPage,
   value: "",
   tab: 0,
 }
@@ -37,7 +34,6 @@ const search = (state = initState, action) => {
       loadingVtuber,
       loadingBili,
       nextPageTokenYoutube,
-      twitterlimit,
       pageVtuber,
       value,
       tab,
@@ -64,7 +60,6 @@ const search = (state = initState, action) => {
         nextPageTokenYoutube:"",
         pageVtuber: 0,
         pageBili: 1,
-        twitterlimit: perPage,
       }
     }
 
@@ -129,7 +124,7 @@ const search = (state = initState, action) => {
         youtubeData.push({
           videoId: item.videoId,
           time: date,
-          displaytime:  date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate())  + ' ' +  (date.getHours().toString().length === 1?"0"+date.getHours().toString():date.getHours().toString()) + ':' + (date.getMinutes().toString().length === 1?"0"+date.getMinutes().toString():date.getMinutes().toString()), 
+          displaytime:  date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate())  + ' ' +  (date.getHours().toString().length === 1?"0"+date.getHours().toString():date.getHours().toString()) + ':' + (date.getMinutes().toString().length === 1?"0"+date.getMinutes().toString():date.getMinutes().toString()),
           title: item.title,
           description: item.description,
           image: item.image,
@@ -178,9 +173,9 @@ const search = (state = initState, action) => {
     }
 
     case SEARCH_TWITTER_END_REACHED: {
+      //reseved for api improvment
       return {
         ...state,
-        twitterlimit: twitterlimit + perPage,
       };
     }
 

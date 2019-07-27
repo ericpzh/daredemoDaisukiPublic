@@ -92,7 +92,9 @@ const AppTabNavigator = createBottomTabNavigator({
 const AppStackNavigator = createStackNavigator({
     AppTabNavigator:{
       screen: AppTabNavigator,
-      navigationOptions: AppNavigationOptions
+      navigationOptions: {
+        header: null
+      }
     },
     SearchScreen: {
       screen: SearchScreen,

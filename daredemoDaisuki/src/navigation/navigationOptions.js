@@ -127,7 +127,6 @@ export const SearchNavigationOptions = ({navigation}) => ({
   ),
   headerStyle: {
     backgroundColor: colorTheme[store.getState().user.colorTheme].themeColor,
-
   },
   headerTintColor: colorTheme[store.getState().user.colorTheme].areaPrimary,
 })
