@@ -7,7 +7,6 @@ import { styles, fontsStyles,  colors } from '../../../styles/App/Home/headerSty
 
 export const AppHeaderBar = ({navigation, collapsible}) => {
   const { translateY, translateOpacity, translateProgress } = collapsible;
-  console.log(navigation.state)
   return (
     <View style={styles(store.getState().user.colorTheme).container}>
       <TouchableOpacity onPress={()=>navigation.toggleDrawer()}>
