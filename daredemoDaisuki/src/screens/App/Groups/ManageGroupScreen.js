@@ -15,6 +15,7 @@ import { putGroupsBegin, putGroupsSuccess, putGroupsFailure, changeSeletedGroup,
 import ShakingComponent from '../../../assets/shaking.js';
 import { setPrevScreen } from '../../../actions/globalActions.js';
 import  LoadingComponent  from '../../../assets/loading.js';
+import ImageLoadingComponent from '../../../assets/imageLoading.js';
 
 //TODO: ADD loading for every call to API
 class AddToGroupModal extends React.Component {
@@ -51,7 +52,12 @@ class AddToGroupModal extends React.Component {
           arr.push((
             <NBListItem avatar key={vtuber} onPress={() => {this.toggleCheckbox(vtuber);}}>
               <NBLeft>
+              {
+                this.props.vtuber&&this.props.vtuber.vtubersImage&&this.props.vtuber.vtubersImage[vtuber]?
                 <NBThumbnail source={this.props.vtuber&&this.props.vtuber.vtubersImage&&this.props.vtuber.vtubersImage[vtuber]?{ uri: this.props.vtuber.vtubersImage[vtuber] }:altImg} />
+                :
+                <ImageLoadingComponent/>
+              }
               </NBLeft>
               <NBBody style={styles(this.props.user.colorTheme).listItemWrapper}>
                 <View>
@@ -277,10 +283,16 @@ class ManageGroupScreen extends React.Component {
             body={
               <View style={styles(this.props.user.colorTheme).listItem}>
                 <View style={styles(this.props.user.colorTheme).listItemHeader}>
-                  <NBThumbnail
-                    style={styles(this.props.user.colorTheme).listItemHeaderImage}
-                    source={this.props.vtuber&&this.props.vtuber.vtubersImage&&this.props.vtuber.vtubersImage[vtuber]?{uri: this.props.vtuber.vtubersImage[vtuber]}:altImg }
-                  />
+                  {
+                    this.props.vtuber&&this.props.vtuber.vtubersImage&&this.props.vtuber.vtubersImage[vtuber]?
+                    <NBThumbnail
+                      style={styles(this.props.user.colorTheme).listItemHeaderImage}
+                      source={this.props.vtuber&&this.props.vtuber.vtubersImage&&this.props.vtuber.vtubersImage[vtuber]?{uri: this.props.vtuber.vtubersImage[vtuber]}:altImg }
+                    />
+                    :
+                    <ImageLoadingComponent style={styles(this.props.user.colorTheme).listItemHeaderImage}/>
+                  }
+
                   <View style={styles(this.props.user.colorTheme).listItemHeaderTextWrapper}>
                     <Text style={[fontsStyles(this.props.user.font).header,styles(this.props.user.colorTheme).listItemHeaderText]}>{this.props.vtuber&&this.props.vtuber.vtubersDict&&this.props.vtuber.vtubersDict[vtuber]?this.props.vtuber.vtubersDict[vtuber].name:vtuber}</Text>
                     <Text style={[fontsStyles(this.props.user.font).subheader,styles(this.props.user.colorTheme).listItemHeaderSubText]}>{vtuber}</Text>

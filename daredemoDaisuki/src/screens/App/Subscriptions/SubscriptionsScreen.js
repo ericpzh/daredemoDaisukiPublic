@@ -12,6 +12,7 @@ import { putSubscriptions, putGroups } from '../../../api/express.js';
 import { putSubscriptionsBegin, putSubscriptionsSuccess, putSubscriptionsFailure, putGroupsBegin, putGroupsSuccess, putGroupsFailure } from '../../../actions/userActions.js';
 import { setPrevScreen } from '../../../actions/globalActions.js';
 import  LoadingComponent  from '../../../assets/loading.js';
+import ImageLoadingComponent from '../../../assets/imageLoading.js';
 
 const mapStateToProps = (state) => {
   const { user, vtuber } = state
@@ -141,7 +142,13 @@ class SubscriptionsScreen extends React.Component {
               return (
                 <View key={index} style={styles(this.props.user.colorTheme).listItem}>
                   <View style={styles(this.props.user.colorTheme).listItemHeader}>
-                    <NBThumbnail   style={styles(this.props.user.colorTheme).listItemHeaderImage} source={item.image ?{ uri: item.image }: altImg} />
+                  {
+                    item.image
+                    ?
+                    <NBThumbnail style={styles(this.props.user.colorTheme).listItemHeaderImage} source={item.image ?{ uri: item.image }: altImg} />
+                    :
+                    <ImageLoadingComponent style={styles(this.props.user.colorTheme).listItemHeaderImage}/>
+                  }
                     <View style={styles(this.props.user.colorTheme).listItemHeaderTextWrapper}>
                       <Text style={[fontsStyles(this.props.user.font).header,styles(this.props.user.colorTheme).listItemHeaderText]}>{item.name}</Text>
                       <Text style={[fontsStyles(this.props.user.font).subheader,styles(this.props.user.colorTheme).listItemHeaderSubText]}>{item.enname}</Text>
