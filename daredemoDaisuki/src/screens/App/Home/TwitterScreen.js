@@ -17,6 +17,7 @@ import  LoadingComponent  from '../../../assets/loading.js';
 import { setPrevScreen } from '../../../actions/globalActions.js';
 import Tutorial from './Tutorial.js';
 import { collapsibleParams } from './AppHeader.js'
+import ImageLoadingComponent from '../../../assets/imageLoading.js';
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
@@ -338,7 +339,13 @@ class TwitterScreen extends React.Component {
                     <TouchableOpacity style={styles(this.props.user.colorTheme).listItemContentImageContainer} onPress={()=>{
                       this.setState({displayUrl:entities[curr].media_url});
                     }} key={entities[curr].preview + "preview"}>
-                      <Image style={styles(this.props.user.colorTheme).listItemContentImage} source={entities[curr].preview ? {uri: entities[curr].preview} : altImg}/>
+                      {
+                        entities[curr].preview
+                        ?
+                        <Image style={styles(this.props.user.colorTheme).listItemContentImage} source={entities[curr].preview ? {uri: entities[curr].preview} : altImg}/>
+                        :
+                        <ImageLoadingComponent style={styles(this.props.user.colorTheme).listItemContentImage}/>
+                      }
                     </TouchableOpacity>
                   )
                 }
@@ -373,7 +380,13 @@ class TwitterScreen extends React.Component {
                   <TouchableOpacity style={styles(this.props.user.colorTheme).listItemContentImageContainer} onPress={()=>{
                     this.setState({fullScreenUrl: entities[curr].media_url,fullSreenType:"image"});
                   }} key={entities[curr].media_url + "photo"}>
-                    <Image style={styles(this.props.user.colorTheme).listItemContentImage} source={entities[curr].media_url ? {uri: entities[curr].media_url} : altImg}/>
+                    {
+                      entities[curr].media_url
+                      ?
+                      <Image style={styles(this.props.user.colorTheme).listItemContentImage} source={entities[curr].media_url ? {uri: entities[curr].media_url} : altImg}/>
+                      :
+                      <ImageLoadingComponent style={styles(this.props.user.colorTheme).listItemContentImage}/>
+                    }
                   </TouchableOpacity>
               )}else if(!hasVideo && dict[i].mediaType === "photos") {
                 let uris = entities[curr].data.map(data => {return {url: data.media_url}});
@@ -396,7 +409,13 @@ class TwitterScreen extends React.Component {
                     <TouchableOpacity style={styles(this.props.user.colorTheme).listItemContentImageContainer} onPress={()=>{
                       this.setState({fullScreenUrl: uris,fullSreenType:"images"});
                     }} key={val.media_url + "photos"}>
-                      <Image style={ imagestyle } source={val.media_url ? {uri: val.media_url} : altImg}/>
+                      {
+                        val.media_url
+                        ?
+                        <Image style={ imagestyle } source={val.media_url ? {uri: val.media_url} : altImg}/>
+                        :
+                        <ImageLoadingComponent style={ imagestyle }/>
+                      }
                     </TouchableOpacity>
                 );
               });
@@ -705,10 +724,16 @@ class TwitterScreen extends React.Component {
               onPress={() =>
                 {Linking.openURL("https://twitter.com/"+data.user.screen_name).catch((err) => console.error('An error occurred', err))}
             }>
-              <Image
-                style={styles(this.props.user.colorTheme).listItemHeaderImage}
-                source={data.user.profile_image_url.replace('_normal',"_bigger") ?{uri: data.user.profile_image_url.replace('_normal',"_bigger") }: altImg}
-              />
+              {
+                data.user.profile_image_url.replace('_normal',"_bigger")
+                ?
+                <Image
+                  style={styles(this.props.user.colorTheme).listItemHeaderImage}
+                  source={data.user.profile_image_url.replace('_normal',"_bigger") ?{uri: data.user.profile_image_url.replace('_normal',"_bigger") }: altImg}
+                />
+                :
+                <ImageLoadingComponent style={styles(this.props.user.colorTheme).listItemHeaderImage}/>
+              }
             </TouchableOpacity>
 
             <TouchableOpacity

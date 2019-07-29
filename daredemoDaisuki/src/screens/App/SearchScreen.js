@@ -22,6 +22,7 @@ import altImg from '../../assets/altImg.jpg';
 import  LoadingComponent  from '../../assets/loading.js';
 import { setPrevScreen } from '../../actions/globalActions.js';
 import { imageFetch } from '../../api/custom.js';
+import ImageLoadingComponent from '../../assets/imageLoading.js';
 
 const mapStateToProps = (state) => {
   const { search, vtuber, youtube, user } = state
@@ -755,9 +756,16 @@ class SearchScreen extends React.Component {
             renderItem={({item, index}) =>
             <NBListItem avatar key={index}>
               <NBLeft>
-                <NBThumbnail source={this.props.vtuber.vtubersImage[item.enname]
-                  ?{ uri: this.props.vtuber.vtubersImage[item.enname]
-                  }:altImg} />
+                {
+                  this.props.vtuber.vtubersImage[item.enname]
+                  ?
+                  <NBThumbnail source={this.props.vtuber.vtubersImage[item.enname]
+                    ?{ uri: this.props.vtuber.vtubersImage[item.enname]
+                    }:altImg} />
+                  :
+                  <ImageLoadingComponent/>
+                }
+
               </NBLeft>
               <NBBody style={styles(this.props.user.colorTheme).listItemWrapper}>
                 <View>

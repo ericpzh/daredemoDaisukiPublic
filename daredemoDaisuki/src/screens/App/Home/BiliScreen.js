@@ -17,6 +17,7 @@ import  LoadingComponent  from '../../../assets/loading.js';
 import { setPrevScreen } from '../../../actions/globalActions.js';
 import Tutorial from './Tutorial.js';
 import { collapsibleParams } from './AppHeader.js'
+import ImageLoadingComponent from '../../../assets/imageLoading.js';
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
@@ -272,12 +273,18 @@ class BiliScreen extends React.Component {
                         <TouchableOpacity style={styles(this.props.user.colorTheme).horizontalListItem} onPress={() =>
                           {Linking.openURL(item.url).catch((err) => console.error('An error occurred', err))}
                         }>
-                          <NBThumbnail
-                            style={styles(this.props.user.colorTheme).horizontalListItemImage}
-                            source={this.props.vtuber.biliImage[item.mid]
-                              ? {uri: this.props.vtuber.biliImage[item.mid]
-                              }: altImg}
-                          />
+                          {
+                            this.props.vtuber.biliImage[item.mid]
+                            ?
+                            <NBThumbnail
+                              style={styles(this.props.user.colorTheme).horizontalListItemImage}
+                              source={this.props.vtuber.biliImage[item.mid]
+                                ? {uri: this.props.vtuber.biliImage[item.mid]
+                                }: altImg}
+                            />
+                            :
+                            <ImageLoadingComponent style={styles(this.props.user.colorTheme).horizontalListItemImage}/>
+                          }
                         </TouchableOpacity>
                       )}
                       data = {this.props.bili.live.filter(v=>v.liveStatus)}
@@ -292,12 +299,18 @@ class BiliScreen extends React.Component {
                         }
                         style={styles(this.props.user.colorTheme).listItemHeaderImageWrapper}
                       >
+                      {
+                        this.props.vtuber.biliImage[item.mid]
+                        ?
                         <Image
                           style={styles(this.props.user.colorTheme).listItemHeaderImage}
                           source={this.props.vtuber.biliImage[item.mid]
                             ? {uri: this.props.vtuber.biliImage[item.mid]
                             }: altImg}
                         />
+                        :
+                        <ImageLoadingComponent style={styles(this.props.user.colorTheme).listItemHeaderImage}/>
+                      }
                       </TouchableOpacity>
                       <TouchableOpacity onPress={() =>
                         {Linking.openURL("https://www.bilibili.com/video/av"+item.aid).catch((err) => console.error('An error occurred', err))}
@@ -312,10 +325,16 @@ class BiliScreen extends React.Component {
                       <TouchableOpacity onPress={()=>{
                         Linking.openURL("https://www.bilibili.com/video/av"+item.aid).catch((err) => console.error('An error occurred', err))
                       }}>
+                      {
+                        item.image
+                        ?
                         <Image
                           style={styles(this.props.user.colorTheme).listItemContentImage}
                           source={item.image?{uri:item.image}:altImg}
                         />
+                        :
+                        <ImageLoadingComponent style={styles(this.props.user.colorTheme).listItemContentImage}/>
+                      }
                       </TouchableOpacity>
                     </View>
                     <View style={styles(this.props.user.colorTheme).listItemFooter}>

@@ -16,6 +16,7 @@ import LoadingComponent from '../../../assets/loading.js';
 import { setPrevScreen } from '../../../actions/globalActions.js';
 import Tutorial from './Tutorial.js';
 import { collapsibleParams } from './AppHeader.js'
+import ImageLoadingComponent from '../../../assets/imageLoading.js';
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
@@ -291,12 +292,18 @@ class YoutubeScreen extends React.Component {
                     }
                     style={styles(this.props.user.colorTheme).listItemHeaderImageWrapper}
                     >
-                      <Image
-                        style={styles(this.props.user.colorTheme).listItemHeaderImage}
-                        source={this.props.vtuber.youtubeImage[item.channelId]
-                          ? {uri: this.props.vtuber.youtubeImage[item.channelId]
-                          }: altImg}
-                      />
+                      {
+                        this.props.vtuber.youtubeImage[item.channelId]
+                        ?
+                        <Image
+                          style={styles(this.props.user.colorTheme).listItemHeaderImage}
+                          source={this.props.vtuber.youtubeImage[item.channelId]
+                            ? {uri: this.props.vtuber.youtubeImage[item.channelId]
+                            }: altImg}
+                        />
+                        :
+                        <ImageLoadingComponent style={styles(this.props.user.colorTheme).listItemHeaderImage} />
+                      }
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() =>
                       {Linking.openURL("https://www.youtube.com/watch?v="+item.videoId).catch((err) => console.error('An error occurred', err))}
@@ -321,10 +328,17 @@ class YoutubeScreen extends React.Component {
                       <TouchableOpacity onPress={()=>{
                         this.props.displayWebview(item.title);
                       }}>
-                        <Image
-                          style={styles(this.props.user.colorTheme).listItemContentImage}
-                          source={item.image?{uri:item.image}:altImg}
-                        />
+                        {
+                          item.image
+                          ?
+                          <Image
+                            style={styles(this.props.user.colorTheme).listItemContentImage}
+                            source={item.image?{uri:item.image}:altImg}
+                          />
+                          :
+                          <ImageLoadingComponent style={styles(this.props.user.colorTheme).listItemContentImage} />
+                        }
+
                       </TouchableOpacity>
                     }
                   </View>
