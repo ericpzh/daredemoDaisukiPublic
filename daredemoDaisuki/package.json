@@ -10,6 +10,7 @@
     "axios": "^0.18.0",
     "expo": "^33.0.0",
     "native-base": "^2.12.1",
+    "npm-latest-version": "^1.0.2",
     "react": "16.6.3",
     "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz",
     "react-native-collapsible": "^1.4.0",

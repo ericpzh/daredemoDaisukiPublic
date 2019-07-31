@@ -5,7 +5,7 @@ import { Root, Toast } from 'native-base';
 import { PersistGate } from 'redux-persist/integration/react';
 import * as Font from 'expo-font'
 import { setExpoStatusBarHeight } from 'react-navigation-collapsible';
-import { Constants } from 'expo';
+import Constants from 'expo-constants';
 
 import { store } from './src/store/index.js';
 import { persistor } from './src/store/index.js';
@@ -29,6 +29,7 @@ export default class App extends React.Component {
       sc: require('./src/assets/fonts/ZCOOLXiaoWei-Regular.ttf'),
       scsh: require('./src/assets/fonts/ZCOOLKuaiLe-Regular.ttf'),
       sch: require('./src/assets/fonts/ZCOOLKuaiLe-Regular.ttf'),
+      Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf")
     });
     this.setState({ loading: false });
   }
