@@ -34,8 +34,13 @@ var userSchema = new mongoose.Schema({
   },
   suggestions: {
     type: [String],
-  }
-
+  },
+  nickname: {
+    type: String,
+  },
+  image: {
+    type: String,
+  },
 },{ collection : 'users' });
 
 module.exports = mongoose.model('user', userSchema);

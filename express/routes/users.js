@@ -23,6 +23,8 @@ router.get('/', function (req, res) {
           googleapikey: item.googleapikey,
           groups: item.groups,
           subscriptions: item.subscriptions,
+          nickname: item.nickname,
+          image: item.image,
         }})});
       }
     })
@@ -47,6 +49,8 @@ router.post('/', function (req, res){
       googleapikey: "",
       subscriptions: [],
       groups: [],
+      nickname: "",
+      image: "",
     })
     msg.save({},(err,doc) => {
       if (err){
@@ -79,6 +83,8 @@ router.get('/login', function (req, res) {
             googleapikey: result[0].googleapikey,
             groups: result[0].groups,
             subscriptions: result[0].subscriptions,
+            nickname: result[0].nickname,
+            image: result[0].image,
           }})
         }else{
           res.status(500).send({ message: "wrong password", data: null });
@@ -200,6 +206,75 @@ router.put('/googleapikey', function (req, res) {
     );
   }else{
     res.status(500).send({ message: "name: xxx, password: xxx, googleapikey: xxx", data: {status: false} });
+  }
+});
+
+router.put('/nickname', function (req, res) {
+  /*
+  PUT ./api/nickname?name=fish&password=123
+    body:nickname
+  Return true
+  */
+  if (req.query && req.body && req.query.name && req.query.password && req.body.nickname){
+    user.findOneAndUpdate(
+      {name: req.query.name,password: req.query.password},
+      {nickname: req.body.nickname},
+      (err)=>{
+        if(err){
+          res.status(404).send({ message: "name not found", data: null });
+        }else{
+          res.status(200).send({ message: "OK", data: req.body.nickname });
+        }
+      }
+    );
+  }else{
+    res.status(500).send({ message: "name: xxx, password: xxx, nickname: xxx", data: null });
+  }
+});
+
+router.put('/image', function (req, res) {
+  /*
+  PUT ./api/image?name=fish&password=123
+    body:image
+  Return true
+  */
+  if (req.query && req.body && req.query.name && req.query.password && req.body.image){
+    user.findOneAndUpdate(
+      {name: req.query.name,password: req.query.password},
+      {image: req.body.image},
+      (err)=>{
+        if(err){
+          res.status(404).send({ message: "name not found", data: null });
+        }else{
+          res.status(200).send({ message: "OK", data: req.body.image });
+        }
+      }
+    );
+  }else{
+    res.status(500).send({ message: "name: xxx, password: xxx, image: xxx", data: null });
+  }
+});
+
+router.put('/profile', function (req, res) {
+  /*
+  PUT ./api/profile?name=fish&password=123
+    body:image, nickname
+  Return true
+  */
+  if (req.query && req.body && req.query.name && req.query.password && req.body.nickname && req.body.image){
+    user.findOneAndUpdate(
+      {name: req.query.name,password: req.query.password},
+      {nickname: req.body.nickname, image: req.body.image},
+      (err)=>{
+        if(err){
+          res.status(404).send({ message: "name not found", data: null });
+        }else{
+          res.status(200).send({ message: "OK", data: {image: req.body.image, nickname: req.body.nickname} });
+        }
+      }
+    );
+  }else{
+    res.status(500).send({ message: "name: xxx, password: xxx, nickname: xxx, image: xxx", data: null });
   }
 });
 
