@@ -7,7 +7,7 @@ module.exports = function (router) {
 
     homeRoute.get(function (req, res) {
         var connectionString = secrets.token;
-        res.json({ message: 'My connection string is ' + connectionString });
+        res.json({ message: 'Daredemo Daisuki' });
     });
 
 
