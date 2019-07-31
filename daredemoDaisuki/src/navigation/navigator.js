@@ -11,6 +11,7 @@ import WelcomeScreen from '../screens/Auth/WelcomeScreen';
 import SearchScreen from '../screens/App/SearchScreen.js';
 
 import AccountScreen from '../screens/App/Account/AccountScreen.js';
+import ChangeAccountScreen from '../screens/App/Account/ChangeAccount.js';
 import ChangePasswordScreen from '../screens/App/Account/ChangePasswordScreen.js';
 import ManageAPIScreen from '../screens/App/Account/ManageAPIScreen.js';
 
@@ -106,6 +107,10 @@ const AccountStackNavigator = createStackNavigator({
   AccountScreen: {
     screen: AccountScreen,
     navigationOptions: AppNavigationOptions
+  },
+  ChangeAccountScreen: {
+    screen: ChangeAccountScreen,
+    navigationOptions: AccountScreenNavigationOptions
   },
   ChangePasswordScreen: {
     screen: ChangePasswordScreen,

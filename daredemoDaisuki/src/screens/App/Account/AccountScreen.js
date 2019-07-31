@@ -35,11 +35,15 @@ class AccountScreen extends React.Component {
     var {height, width} = Dimensions.get('window');
     return (
       <View style={styles(this.props.user.colorTheme).container}>
-          <View style={[styles(this.props.user.colorTheme).placeholder,{ height: 6*(height-Header.HEIGHT)/10 }]} >
+          <View style={[styles(this.props.user.colorTheme).placeholder,{ height: 5*(height-Header.HEIGHT)/10 }]} >
             <Carousel width={width} opacity={0.5}/>
           </View>
 
           <View style={styles(this.props.user.colorTheme).content} >
+            <NBButton dark bordered onPress={()=>{this.props.navigation.navigate("ChangeAccountScreen")}} style={styles(this.props.user.colorTheme).button}>
+              <Icon name="md-person" color={themeColor(this.props.user.colorTheme)} size={20}/>
+              <NBText style={[fontsStyles(this.props.user.font).ui,styles(this.props.user.colorTheme).text]}>Account Profile</NBText>
+            </NBButton>
             <NBButton dark bordered onPress={()=>{this.props.navigation.navigate("ChangePasswordScreen")}} style={styles(this.props.user.colorTheme).button}>
               <Icon name="md-key" color={themeColor(this.props.user.colorTheme)} size={20}/>
               <NBText style={[fontsStyles(this.props.user.font).ui,styles(this.props.user.colorTheme).text]}>Change Password</NBText>

@@ -22,6 +22,7 @@ const mapDispatchToProps = dispatch => ({
   changePasswordSuccess: (input) => dispatch(changePasswordSuccess(input)),
   changePasswordFailure: () => dispatch(changePasswordFailure()),
 });
+
 class ChangePasswordScreen extends React.Component {
   constructor(props) {
     super(props);

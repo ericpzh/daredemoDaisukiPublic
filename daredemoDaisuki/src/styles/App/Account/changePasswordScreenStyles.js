@@ -6,9 +6,6 @@ import { fonts } from '../../fonts.js';
 export const fontsStyles = fonts;
 
 export const styles = (color = 'black') => StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   keyboardAvoidingView: {
     flex: 1,
     position: 'absolute',

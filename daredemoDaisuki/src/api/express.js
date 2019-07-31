@@ -251,3 +251,98 @@ export function putGoogleapikey(name, password, googleapikey, putGoogleapikeyBeg
     putGoogleapikeyFailure();//failure
   });
 }
+
+export function putNickname(name, password, nickname, Begin, Success, Failure){
+  /*
+  API Call to https://daredemodaisuki.herokuapp.com/api/users/nickname
+  In:
+    name: String of username
+    password: String of password
+    nickname: ""
+    Begin,Success,Failure Actions
+  Out:
+    successAction()
+    -or-
+    failureAction()
+  */
+  Begin();//begin
+  axios.put(url + '/users/nickname' + '?name=' + name + '&password=' + password , {
+    nickname: nickname,
+  })
+  .then((res)=>{
+    var input = res.data.data;
+    if(input){
+      Success(input);//success
+    }else{
+      Failure();//failure
+    }
+  })
+  .catch((err) => {
+    console.log(err);
+    Failure();//failure
+  });
+}
+
+export function putImage(name, password, image, Begin, Success, Failure){
+  /*
+  API Call to https://daredemodaisuki.herokuapp.com/api/users/image
+  In:
+    name: String of username
+    password: String of password
+    image: ""
+    Begin,Success,Failure Actions
+  Out:
+    successAction()
+    -or-
+    failureAction()
+  */
+  Begin();//begin
+  axios.put(url + '/users/image' + '?name=' + name + '&password=' + password , {
+    image: image,
+  })
+  .then((res)=>{
+    var input = res.data.data;
+    if(input){
+      Success(input);//success
+    }else{
+      Failure();//failure
+    }
+  })
+  .catch((err) => {
+    console.log(err);
+    Failure();//failure
+  });
+}
+
+export function putProfile(name, password, image, nickname, Begin, Success, Failure){
+  /*
+  API Call to https://daredemodaisuki.herokuapp.com/api/users/image
+  In:
+    name: String of username
+    password: String of password
+    image: ""
+    nickname: ""
+    Begin,Success,Failure Actions
+  Out:
+    successAction()
+    -or-
+    failureAction()
+  */
+  Begin();//begin
+  axios.put(url + '/users/profile' + '?name=' + name + '&password=' + password , {
+    image: image,
+    nickname: nickname,
+  })
+  .then((res)=>{
+    var input = res.data.data;
+    if(input){
+      Success(input);//success
+    }else{
+      Failure();//failure
+    }
+  })
+  .catch((err) => {
+    console.log(err);
+    Failure();//failure
+  });
+}

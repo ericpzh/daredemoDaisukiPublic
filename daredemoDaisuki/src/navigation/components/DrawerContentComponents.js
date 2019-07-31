@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { NavigationActions } from 'react-navigation';
-import { Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
 
@@ -30,8 +30,24 @@ class DrawerContentComponents extends Component {
     return (
       <View style={styles(this.props.user.colorTheme).container}>
           <View style={styles(this.props.user.colorTheme).headerContainer}>
-              <Icon name="md-contact" size={84} style={styles(this.props.user.colorTheme).headerIcon}/>
-              <Text style={[fontsStyles(this.props.user.font).ui,styles(this.props.user.colorTheme).headerText]}>{this.props.user.name}</Text>
+            <View style={styles(this.props.user.colorTheme).headerImageContainer}>
+              {
+                this.props.user.image === ""
+                ?
+                <Icon name="md-contact" size={84} style={styles(this.props.user.colorTheme).headerIcon}/>
+                :
+                <Image source={{ uri: this.props.user.image }} style={styles(this.props.user.colorTheme).profileImage}/>
+              }
+              <Text style={[fontsStyles(this.props.user.font).ui,styles(this.props.user.colorTheme).headerText]}>
+                {
+                  this.props.user.nickname !== ""
+                  ?
+                  this.props.user.nickname
+                  :
+                  this.props.user.name
+                }
+              </Text>
+            </View>
           </View>
           <View style={styles(this.props.user.colorTheme).screenContainer}>
               <TouchableOpacity style={this.props.activeItemKey==="Home"?styles(this.props.user.colorTheme).screenStyleActive:styles(this.props.user.colorTheme).screenStyle} onPress={this.navigateToScreen('Home')}>

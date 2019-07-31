@@ -8,6 +8,8 @@ import { LOGIN_BEGIN, LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT,
   TOGGLE_EDITING_GROUP_NAME, MANAGE_GROUP_INIT, CHANGE_COLOR, CHANGE_FONT,
   PUT_TWITTER_API_KEY_BEGIN, PUT_TWITTER_API_KEY_SUCCESS, PUT_TWITTER_API_KEY_FAILURE,
   PUT_GOOGLE_API_KEY_BEGIN, PUT_GOOGLE_API_KEY_SUCCESS, PUT_GOOGLE_API_KEY_FAILURE,
+  CHANGE_NICKNAME_BEGIN, CHANGE_NICKNAME_SUCCESS, CHANGE_NICKNAME_FAILURE,
+  CHANGE_IMAGE_BEGIN, CHANGE_IMAGE_SUCCESS, CHANGE_IMAGE_FAILURE,
 } from '../store/type.js';
 
 export const init = () => ({
@@ -85,6 +87,37 @@ export const changePasswordSuccess = (input) => ({
 export const changePasswordFailure = () => ({
    type: CHANGE_PASSWORD_FAILURE,
 })
+
+export const changeNicknameBegin = () => ({
+   type: CHANGE_NICKNAME_BEGIN,
+})
+
+export const changeNicknameSuccess = (input) => ({
+   type: CHANGE_NICKNAME_SUCCESS,
+   payload: {
+     input: input
+   }
+})
+
+export const changeNicknameFailure = () => ({
+   type: CHANGE_NICKNAME_FAILURE,
+})
+
+export const changeImageBegin = () => ({
+   type: CHANGE_IMAGE_BEGIN,
+})
+
+export const changeImageSuccess = (input) => ({
+   type: CHANGE_IMAGE_SUCCESS,
+   payload: {
+     input: input
+   }
+})
+
+export const changeImageFailure = () => ({
+   type: CHANGE_IMAGE_FAILURE,
+})
+
 
 export const logout = () => ({
    type: LOGOUT,

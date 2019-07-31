@@ -21,8 +21,20 @@ export const styles = (color = 'black') => StyleSheet.create({
     headerIcon:{
       color: colorTheme[color].textQuinary,
     },
+    headerImageContainer:{
+      flex: 1,
+      alignItems: 'center',
+    },
+    profileImage:{
+      width: 84,
+      height: 84,
+      borderRadius: 42,
+      resizeMode: 'cover',
+    },
     headerText: {
-        color: colorTheme[color].textQuinary,
+      marginTop: 10,
+      color: colorTheme[color].textQuinary,
+      fontSize: 15,
     },
     screenContainer: {
         flex: 1,

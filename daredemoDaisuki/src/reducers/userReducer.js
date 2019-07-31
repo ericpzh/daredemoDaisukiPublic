@@ -8,10 +8,14 @@ import { LOGIN_BEGIN, LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT,
   TOGGLE_EDITING_GROUP_NAME, MANAGE_GROUP_INIT, CHANGE_COLOR, CHANGE_FONT,
   PUT_TWITTER_API_KEY_BEGIN, PUT_TWITTER_API_KEY_SUCCESS, PUT_TWITTER_API_KEY_FAILURE,
   PUT_GOOGLE_API_KEY_BEGIN, PUT_GOOGLE_API_KEY_SUCCESS, PUT_GOOGLE_API_KEY_FAILURE,
+  CHANGE_NICKNAME_BEGIN, CHANGE_NICKNAME_SUCCESS, CHANGE_NICKNAME_FAILURE,
+  CHANGE_IMAGE_BEGIN, CHANGE_IMAGE_SUCCESS, CHANGE_IMAGE_FAILURE,
 } from '../store/type.js';
 
 const initState = {
   name: "",
+  nickname: "",
+  image: "",
   password: "",
   subscriptions: [],
   groups: [],
@@ -45,6 +49,8 @@ const user = (state = initState, action) => {
       groupsLoading,
       selectedGroup,
       editingGroupName,
+      nickname,
+      image,
     } = state;
 
   switch (action.type) {
@@ -53,6 +59,8 @@ const user = (state = initState, action) => {
         ... state,
         subscriptions: [],
         groups: [],
+        nickname: "",
+        image: "",
         suggestions: [],
         googleapikey: "",
         twitterapikey: {key:"",secretKey:"",token:"",secretToken:""},
@@ -92,6 +100,8 @@ const user = (state = initState, action) => {
         ...state,
         name: action.payload.input.name,
         password: action.payload.input.password,
+        nickname: action.payload.input.nickname,
+        image: action.payload.input.image,
         subscriptions: action.payload.input.subscriptions,
         groups: action.payload.input.groups,
         googleapikey: action.payload.input.googleapikey,
@@ -118,6 +128,8 @@ const user = (state = initState, action) => {
     case GET_ACCOUNT_SUCCESS: {
       return {
         ...state,
+        nickname: action.payload.input.nickname,
+        image: action.payload.input.image,
         subscriptions: action.payload.input.subscriptions,
         groups: action.payload.input.groups,
         googleapikey: action.payload.input.googleapikey,
@@ -146,6 +158,8 @@ const user = (state = initState, action) => {
         ...state,
         name: action.payload.input.name,
         password: action.payload.input.password,
+        nickname: action.payload.input.nickname,
+        image: action.payload.input.image,
         subscriptions: action.payload.input.subscriptions,
         groups: action.payload.input.groups,
         googleapikey: action.payload.input.googleapikey,
@@ -185,10 +199,55 @@ const user = (state = initState, action) => {
       };
     }
 
+    case CHANGE_NICKNAME_BEGIN: {
+      return {
+        ...state,
+        authLoading: true,
+      };
+    }
+
+    case CHANGE_NICKNAME_SUCCESS: {
+      return {
+        ...state,
+        nickname: action.payload.input,
+        authLoading: false,
+      };
+    }
+
+    case CHANGE_NICKNAME_FAILURE: {
+      return {
+        ...state,
+        authLoading: false,
+      };
+    }
+
+    case CHANGE_IMAGE_BEGIN: {
+      return {
+        ...state,
+        authLoading: true,
+      };
+    }
+
+    case CHANGE_IMAGE_SUCCESS: {
+      return {
+        ...state,
+        image: action.payload.input,
+        authLoading: false,
+      };
+    }
+
+    case CHANGE_IMAGE_FAILURE: {
+      return {
+        ...state,
+        authLoading: false,
+      };
+    }
     case LOGOUT: {
       return {
         name: "",
         password: "",
+        nickname: "",
+        image: "",
         subscriptions: [],
         suggestions: [],
         groups: [],

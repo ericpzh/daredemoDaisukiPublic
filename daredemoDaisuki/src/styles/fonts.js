@@ -15,27 +15,27 @@ export const fonts = (font = 'vivid') => {
       var uiheaderFont = 'uih';
       break;
     case 'normal':
-      var headerFont = '';
-      var subheaderFont = '';
-      var headerFontCN = '';
-      var subheaderFontCN = '';
-      var textFont = '';
-      var textFontCN = '';
-      var tagFont = '';
-      var linkFont = '';
-      var uiFont = '';
-      var uiheaderFont = '';
+      var headerFont = null;
+      var subheaderFont = null;
+      var headerFontCN = null;
+      var subheaderFontCN = null;
+      var textFont = null;
+      var textFontCN = null;
+      var tagFont = null;
+      var linkFont = null;
+      var uiFont = null;
+      var uiheaderFont = null;
     default:
-      var headerFont = '';
-      var subheaderFont = '';
-      var headerFontCN = '';
-      var subheaderFontCN = '';
-      var textFont = '';
-      var textFontCN = '';
-      var tagFont = '';
-      var linkFont = '';
-      var uiFont = '';
-      var uiheaderFont = '';
+      var headerFont = null;
+      var subheaderFont = null;
+      var headerFontCN = null;
+      var subheaderFontCN = null;
+      var textFont = null;
+      var textFontCN = null;
+      var tagFont = null;
+      var linkFont = null;
+      var uiFont = null;
+      var uiheaderFont = null;
   }
   return StyleSheet.create({
     link: {
