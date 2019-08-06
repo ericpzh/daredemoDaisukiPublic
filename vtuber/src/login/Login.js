@@ -57,7 +57,7 @@ const Login = withRouter(({ history }) => {
       <link href='https://fonts.googleapis.com/css?family=Artifika' rel='stylesheet'/>
       <link href='https://fonts.googleapis.com/css?family=Alef' rel='stylesheet'/>
       <div className="login" style={{height:isMobile?height*2.5:height-0.5}}>
-        <div className="login-mask" style={isMobile && {paddingTop: '100px', justifyContent: 'flex-start'}}>
+        <div className="login-mask" style={{paddingTop: isMobile && '100px', justifyContent: isMobile && 'flex-start'}}>
           <div className={isMobile?'title-mobile':'title'}>
             <h1 className='title-text'> Admin Portal </h1>
           </div>
