@@ -2,7 +2,7 @@
 Daredemo Daisuki!
 
 ## Visit Our Homepage
-https://vtubersfeed.herokuapp.com/
+https://vtubersfeed.web.app/
 
 ## Intro
 The app that does it all!
