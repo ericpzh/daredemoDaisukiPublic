@@ -48,9 +48,11 @@ class SettingScreen extends React.Component {
         {
           text: 'Confirm',
           onPress: () => {
-            this.props.accountInit();//init props.user
-            this.props.vtuberInit();//init props.vtuber
-            this.props.logout();//reset props.user
+            setTimeout(()=>{
+              this.props.accountInit();//init props.user
+              this.props.vtuberInit();//init props.vtuber
+              this.props.logout();//reset props.user
+            },50)
             this.props.navigation.navigate("Auth");//to Auth
           }
         },

@@ -57,6 +57,7 @@ const user = (state = initState, action) => {
     case ACCOUNT_INIT: {
       return {
         ... state,
+        font: 'vivid',
         subscriptions: [],
         groups: [],
         nickname: "",
@@ -75,6 +76,7 @@ const user = (state = initState, action) => {
     case USER_INIT: {
       return {
         ... state,
+        font: 'vivid',
         subscriptionsGroup: "Daredemo Daisuki",
         subscriptionsLoading: {},
         groupsLoading: false,
@@ -258,7 +260,7 @@ const user = (state = initState, action) => {
         groupsLoading: false,
         subscriptionsGroup: "Daredemo Daisuki",
         colorTheme: colorTheme,
-        font: font,
+        font: 'vivid',
         selectedGroup: "",
         editingGroupName: false,
       };

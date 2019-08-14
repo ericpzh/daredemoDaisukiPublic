@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const url = "https://daredemodaisuki.herokuapp.com/api";
+//const url = "https://daredemodaisuki.herokuapp.com/api";
+const url = "http://daredemodaisuki.web.illinois.edu/api";
 
 //TODO: merge callback arg to successAction
 export function getAccount(name, fetchAccountBegin, fetchAccountSuccess,fetchAccountFailure){

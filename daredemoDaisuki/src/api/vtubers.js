@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const url = "https://daredemodaisuki.herokuapp.com/api";
+//const url = "https://daredemodaisuki.herokuapp.com/api";
+const url = "http://daredemodaisuki.web.illinois.edu/api";
 
 export function getVtubers(enname, fetchBegin, fetchSuccess,fetchFailure){
   /*

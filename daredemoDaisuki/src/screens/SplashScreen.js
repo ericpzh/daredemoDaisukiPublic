@@ -74,6 +74,7 @@ class SplashScreen extends React.Component {
     }
   }
   render(){
+    console.log(this.props.user)
     return (<View style={styles(this.props.user.colorTheme).container}><LoadingComponent/></View>)//render
   }
 }

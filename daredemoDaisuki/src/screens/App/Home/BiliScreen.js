@@ -81,29 +81,33 @@ class BiliScreen extends React.Component {
     this.flatListRef.getNode().scrollToOffset({ animated: true, offset: 0 });//scroll to top
   }
   componentDidMount(){
-    if(willBlurSubscription){
-      willBlurSubscription.remove();
-    }
-    let willBlurSubscription = this.props.navigation.addListener(
-      'willBlur',
-      payload => {
-        this.props.setPrevScreen("BiliScreen");
+    if(this.props.user.subscriptions.length === 0){
+      this.props.navigation.navigate("SearchScreen");
+    }else{
+      if(willBlurSubscription){
+        willBlurSubscription.remove();
       }
-    );
-    if(didFocusSubscription){
-      didFocusSubscription.remove();
-    }
-    let didFocusSubscription = this.props.navigation.addListener(
-      'didFocus',
-      payload => {
-        setTimeout(()=>{
-          if(this.props.global.prevScreen === "SearchScreen" || this.props.global.prevScreen === "SubscriptionsScreen"){
-            this.init();
-          }
-        },0)
+      let willBlurSubscription = this.props.navigation.addListener(
+        'willBlur',
+        payload => {
+          this.props.setPrevScreen("BiliScreen");
+        }
+      );
+      if(didFocusSubscription){
+        didFocusSubscription.remove();
       }
-    );
-    this.init();
+      let didFocusSubscription = this.props.navigation.addListener(
+        'didFocus',
+        payload => {
+          setTimeout(()=>{
+            if(this.props.global.prevScreen === "SearchScreen" || this.props.global.prevScreen === "SubscriptionsScreen"){
+              this.init();
+            }
+          },0)
+        }
+      );
+      this.init();
+    }
   }
   init(){
     this.props.init();//reset props.bili
@@ -244,10 +248,6 @@ class BiliScreen extends React.Component {
         </Modal>
         <View style={styles(this.props.user.colorTheme).listContainer}>
           {
-            this.props.user.subscriptions.length === 0
-            ?
-            <Tutorial/>
-            :
             <AnimatedFlatList
               ref={r => (this.flatListRef = r)}
               contentContainerStyle={{paddingTop: paddingHeight}}

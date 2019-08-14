@@ -1,9 +1,10 @@
 import axios from 'axios';
 
-const userurl = "https://daredemodaisuki.herokuapp.com/api";
-const vtuberurl = "https://daredemodaisuki.herokuapp.com/api";
+//const userurl = "https://daredemodaisuki.herokuapp.com/api";
+//const vtuberurl = "https://daredemodaisuki.herokuapp.com/api";
+const vtuberurl = "http://daredemodaisuki.web.illinois.edu/api";
+const userurl = "http://daredemodaisuki.web.illinois.edu/api";
 const youtubeurl = "https://www.googleapis.com/youtube/v3";
-const key = "AIzaSyCNHDQoUdK8hCqx1aWQZYep-O1GC8VNQ9Y";
 
 export function initFetch(user, fetchVtubersBegin, fetchVtubersSuccess, fetchVtubersFailure, youtubeFetch,twitterFetch,biliFetch,fetchBeginYoutube,fetchSuccessYoutube,fetchFailureYoutube,fetchBeginTwitter,fetchSuccessTwitter,fetchFailureTwitter,fetchBeginBili,fetchSuccessBili,fetchFailureBili){
   /*
@@ -37,38 +38,6 @@ export function initFetch(user, fetchVtubersBegin, fetchVtubersSuccess, fetchVtu
       var input = res.data.data;
       var vtubers = input.filter((vtuber) => {return subscriptions.indexOf(vtuber.enname) >= 0});
       imageFetch(vtubers,youtubeFetch,twitterFetch,biliFetch,fetchBeginYoutube,fetchSuccessYoutube,fetchFailureYoutube,fetchBeginTwitter,fetchSuccessTwitter,fetchFailureTwitter,fetchBeginBili,fetchSuccessBili,fetchFailureBili,user.googleapikey,user.twitterapikey);
-      /*
-      fetchChannelsBegin();//image begin
-      var youtubeIds = vtubers.filter((vtuber) => {return subscriptions.indexOf(vtuber.enname) >= 0}).map(vtuber => vtuber.youtubeId);//list of subscribed vtuber's youtubeId
-      axios.all(youtubeIds.map(youtubeId =>
-        axios.get( youtubeurl + "/channels", {
-          params: {
-            part: "snippet",
-            key: key,
-            id:  youtubeId
-          }
-        })
-      ))
-      .then(axios.spread(function (...responses) {
-        var input = [];
-        responses.forEach(res =>{
-          for (var i = 0; i < res.data.items.length; i++){
-            input.push({
-              enname: vtubers.filter((vtuber)=>{return vtuber.youtubeId == res.data.items[i].id})[0].enname,
-              id: res.data.items[i].id,
-              title: res.data.items[i].snippet.title,
-              description: res.data.items[i].snippet.description,
-              image: res.data.items[i].snippet.thumbnails.high.url,
-            });
-          }
-        })
-        fetchChannelsSuccess(input);//image success
-      }))
-      .catch((err) => {
-        console.log(err);
-        fetchChannelsFailure();//image failure
-      });
-      */
       fetchVtubersSuccess(input);//vtuber success
     })
     .catch((err) => {
