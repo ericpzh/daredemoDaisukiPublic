@@ -13,13 +13,13 @@ import './footer.css';
 import homegif from '../assets/home.gif';
 import suggestiongif from '../assets/suggestion.gif';
 import searchgif from '../assets/search.gif';
-import registergif from '../assets/register.gif';
+import customizegif from '../assets/customize.gif';
 import groupgif from '../assets/group.gif';
 import subscriptionsgif from '../assets/subscriptions.gif';
 
 const githublink = 'https://github.com/ericpzh/daredemoDaisukiPublic';
 const expolink = 'https://expo.io/@ericsama/daredemoDaisuki';
-const andriodlink = 'https://expo.io/artifacts/b4ee73a0-b508-4332-80dd-0bc8dc0a6260';
+const andriodlink = 'https://expo.io/artifacts/c525110c-2e5f-4b3c-a7de-6101466a038d';
 const ioslink = 'https://expo.io/@ericsama/daredemoDaisuki';
 
 const Home = withRouter(({ location, history }) => {
@@ -180,19 +180,19 @@ const Home = withRouter(({ location, history }) => {
             {
               !isMobile &&
               <div className='subsection'>
-                <img style={demoStyle} src={registergif} alt='404'/>
+                <img style={demoStyle} src={customizegif} alt='404'/>
               </div>
             }
             <div className='subsection'>
-              <h1> Easy Registration, No Need For Email Account </h1>
+              <h1> Customize Your Account </h1>
               <p>
-              Breeze through fast and easy registration process and enjoy contents from your favorite Vtubers.
+              Upload your profile picture and change your nickname at anytime.
               </p>
             </div>
             {
               isMobile &&
               <div className='subsection'>
-                <img style={demoStyle} src={registergif} alt='404'/>
+                <img style={demoStyle} src={customizegif} alt='404'/>
               </div>
             }
           </div>
@@ -210,12 +210,12 @@ const Home = withRouter(({ location, history }) => {
         <a className='download-button andriod' href={andriodlink}>
           <FontAwesomeIcon icon={faAndroid} size='2x'/>
           <h2 className='download-button-text'> Andorid </h2>
-          <h3> (0.1.3) </h3>
+          <h3> (0.1.4) </h3>
         </a>
         <a className='download-button ios' href={ioslink}>
           <FontAwesomeIcon icon={faApple} size='2x'/>
           <h2 className='download-button-text'> IOS </h2>
-          <h3> (0.1.3) </h3>
+          <h3> (0.1.4) </h3>
         </a>
         <a className='download-button github' href={githublink}>
           <FontAwesomeIcon icon={faGithub} size='2x'/>
