@@ -17,7 +17,7 @@ const transitionStyle = {
   'transition': 'all 0.5s ease-in-out',
 };
 
-const HeaderLink =  ({pathname, text, to, elseTo, isMobile, isTop, setMenuExpandedFinished, setMenuExpanded}) => {
+const HeaderLink =  ({pathname, text, to, elseTo, isMobile, isTop, setMenuExpandedFinished, setMenuExpanded, offset}) => {
   const linkStyle = {
     padding: !isMobile ? '15px' : '15px 30px' ,
     fontFamily: 'Artifika',
@@ -31,12 +31,12 @@ const HeaderLink =  ({pathname, text, to, elseTo, isMobile, isTop, setMenuExpand
       <Link
         style={ linkStyle }
         className='header-item'
-        activeClass={ !isMobile && !isTop ? 'header-item-active' : ''}
+        activeClass={ !isMobile && !isTop ? '' : ''}
         onClick={()=>{setMenuExpandedFinished(false);setMenuExpanded(false);}}
         to={ to }
         spy={true}
         smooth={true}
-        offset={-80}
+        offset={offset}
         duration={500}
         isDynamic={true}
       >
@@ -105,10 +105,10 @@ const Header = withRouter(({ location, history }) => {
             </CSSTransition>
             :
             <div className='header-item-container button-container'>
-              <HeaderLink pathname={location.pathname} text='Home' to='home' elseTo='/' isMobile={isMobile} isTop={isTop} setMenuExpandedFinished = {setMenuExpandedFinished} setMenuExpanded = {setMenuExpanded}/>
-              <HeaderLink pathname={location.pathname} text='Demo' to='demo'elseTo='/' isMobile={isMobile} isTop={isTop} setMenuExpandedFinished = {setMenuExpandedFinished} setMenuExpanded = {setMenuExpanded}/>
-              <HeaderLink pathname={location.pathname} text='Download' to='download' elseTo='/' isMobile={isMobile} isTop={isTop} setMenuExpandedFinished = {setMenuExpandedFinished} setMenuExpanded = {setMenuExpanded}/>
-              <HeaderLink pathname={location.pathname} text='Admin' to='admin' elseTo='/admin' isMobile={isMobile} isTop={isTop} setMenuExpandedFinished = {setMenuExpandedFinished} setMenuExpanded = {setMenuExpanded}/>
+              <HeaderLink pathname={location.pathname} text='Home' to='home' elseTo='/' isMobile={isMobile} isTop={isTop} setMenuExpandedFinished = {setMenuExpandedFinished} setMenuExpanded = {setMenuExpanded} offset={-80}/>
+              <HeaderLink pathname={location.pathname} text='Demo' to='demo'elseTo='/' isMobile={isMobile} isTop={isTop} setMenuExpandedFinished = {setMenuExpandedFinished} setMenuExpanded = {setMenuExpanded} offset={-80}/>
+              <HeaderLink pathname={location.pathname} text='Download' to='download' elseTo='/' isMobile={isMobile} isTop={isTop} setMenuExpandedFinished = {setMenuExpandedFinished} setMenuExpanded = {setMenuExpanded} offset={-80}/>
+              <HeaderLink pathname={location.pathname} text='Admin' to='admin' elseTo='/admin' isMobile={isMobile} isTop={isTop} setMenuExpandedFinished = {setMenuExpandedFinished} setMenuExpanded = {setMenuExpanded} offset={-80}/>
             </div>
           }
         </div>
@@ -123,10 +123,10 @@ const Header = withRouter(({ location, history }) => {
           {
             menuExpandedFinished ?
           <div className='header-expanded-menu'>
-            <HeaderLink pathname={location.pathname} text='Home' to='home' elseTo='/' isMobile={isMobile} isTop={isTop} setMenuExpandedFinished = {setMenuExpandedFinished} setMenuExpanded = {setMenuExpanded}/>
-            <HeaderLink pathname={location.pathname} text='Demo' to='demo'elseTo='/' isMobile={isMobile} isTop={isTop} setMenuExpandedFinished = {setMenuExpandedFinished} setMenuExpanded = {setMenuExpanded}/>
-            <HeaderLink pathname={location.pathname} text='Download' to='download' elseTo='/' isMobile={isMobile} isTop={isTop} setMenuExpandedFinished = {setMenuExpandedFinished} setMenuExpanded = {setMenuExpanded}/>
-            <HeaderLink pathname={location.pathname} text='Admin' to='admin' elseTo='/admin' isMobile={isMobile} isTop={isTop} setMenuExpandedFinished = {setMenuExpandedFinished} setMenuExpanded = {setMenuExpanded}/>
+            <HeaderLink pathname={location.pathname} text='Home' to='home' elseTo='/' isMobile={isMobile} isTop={isTop} setMenuExpandedFinished = {setMenuExpandedFinished} setMenuExpanded = {setMenuExpanded} offset={-80}/>
+            <HeaderLink pathname={location.pathname} text='Demo' to='demo'elseTo='/' isMobile={isMobile} isTop={isTop} setMenuExpandedFinished = {setMenuExpandedFinished} setMenuExpanded = {setMenuExpanded} offset={-80}/>
+            <HeaderLink pathname={location.pathname} text='Download' to='download' elseTo='/' isMobile={isMobile} isTop={isTop} setMenuExpandedFinished = {setMenuExpandedFinished} setMenuExpanded = {setMenuExpanded} offset={-80}/>
+            <HeaderLink pathname={location.pathname} text='Admin' to='admin' elseTo='/admin' isMobile={isMobile} isTop={isTop} setMenuExpandedFinished = {setMenuExpandedFinished} setMenuExpanded = {setMenuExpanded} offset={-80}/>
           </div>
           : <div/>
           }

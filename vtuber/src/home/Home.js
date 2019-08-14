@@ -1,5 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
+import { Redirect } from 'react-router';
 import { faAndroid, faApple, faGithub, faReact, faNodeJs, faNpm, faYoutube, faTwitter, faJs } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
@@ -18,6 +19,8 @@ import subscriptionsgif from '../assets/subscriptions.gif';
 
 const githublink = 'https://github.com/ericpzh/daredemoDaisukiPublic';
 const expolink = 'https://expo.io/@ericsama/daredemoDaisuki';
+const andriodlink = 'https://expo.io/artifacts/b4ee73a0-b508-4332-80dd-0bc8dc0a6260';
+const ioslink = 'https://expo.io/@ericsama/daredemoDaisuki';
 
 const Home = withRouter(({ location, history }) => {
   let { height, width } = useWindowSize();
@@ -33,12 +36,6 @@ const Home = withRouter(({ location, history }) => {
     width: (width*0.7).toString() + 'px',
     height: (aspectRatio * width*0.7).toString() + 'px'
   };
-  const downloadAndriod = () => {
-    alert('Not Yet Available, Please Download The Latest Development Version');
-  }
-  const downloadIOS = () => {
-    alert('Not Yet Available, Please Download The Latest Development Version');
-  }
   return (
     <div className='Home'>
       <link href='https://fonts.googleapis.com/css?family=Artifika' rel='stylesheet'/>
@@ -55,14 +52,14 @@ const Home = withRouter(({ location, history }) => {
             <h1 className='title-text'> {'App! '} </h1>
           </div>
           <div className={'home-button-container'}>
-            <div className='home-button andriod' onClick={()=>{downloadAndriod();}}>
+            <a className='home-button andriod'  href={andriodlink}>
               <FontAwesomeIcon icon={faAndroid} size='2x'/>
               <h2 className='home-button-text'> Andorid </h2>
-            </div>
-            <div className='home-button ios' onClick={()=>{downloadIOS();}}>
+            </a>
+            <a className='home-button ios' href={ioslink}>
               <FontAwesomeIcon icon={faApple} size='2x'/>
               <h2 className='home-button-text'> IOS </h2>
-            </div>
+            </a>
           </div>
         </div>
       </div>
@@ -210,16 +207,16 @@ const Home = withRouter(({ location, history }) => {
         })
       } id='download'>
         <h1> Download Center </h1>
-        <div className='download-button andriod' onClick={()=>{downloadAndriod();}}>
+        <a className='download-button andriod' href={andriodlink}>
           <FontAwesomeIcon icon={faAndroid} size='2x'/>
           <h2 className='download-button-text'> Andorid </h2>
-          <h3> (0.1.0) </h3>
-        </div>
-        <div className='download-button ios' onClick={()=>{downloadIOS();}}>
+          <h3> (0.1.3) </h3>
+        </a>
+        <a className='download-button ios' href={ioslink}>
           <FontAwesomeIcon icon={faApple} size='2x'/>
           <h2 className='download-button-text'> IOS </h2>
-          <h3> (0.1.0) </h3>
-        </div>
+          <h3> (0.1.3) </h3>
+        </a>
         <a className='download-button github' href={githublink}>
           <FontAwesomeIcon icon={faGithub} size='2x'/>
           <h2 className='download-button-text'> Source </h2>
