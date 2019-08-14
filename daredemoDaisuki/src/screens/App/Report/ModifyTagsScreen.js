@@ -212,7 +212,7 @@ class ModifyTagsScreen extends React.Component {
             submitInput={ (input) => {
               if (input !== ""){
                 var newTag = [input];
-                this.setState({ additionTags: [...this.state.additionTags,...[newTag]], modalVisible: false})
+                this.setState({ additionTags: [...this.state.additionTags,...newTag], modalVisible: false})
               }
             }}
             closeDialog={ ()=>{ this.setState({ modalVisible: false}) } }>
