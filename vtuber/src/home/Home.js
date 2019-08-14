@@ -19,13 +19,13 @@ import subscriptionsgif from '../assets/subscriptions.gif';
 
 const githublink = 'https://github.com/ericpzh/daredemoDaisukiPublic';
 const expolink = 'https://expo.io/@ericsama/daredemoDaisuki';
-const andriodlink = 'https://expo.io/artifacts/c525110c-2e5f-4b3c-a7de-6101466a038d';
+const andriodlink = 'https://expo.io/artifacts/1a7488db-d589-4630-bc4f-b2dba2a7fb36';
 const ioslink = 'https://expo.io/@ericsama/daredemoDaisuki';
 
 const Home = withRouter(({ location, history }) => {
   let { height, width } = useWindowSize();
   const isMobile = width < 768;
-  const aspectRatio = 18.5/9;
+  const aspectRatio = 17/9;
   const demoStyle =
   !isMobile ?
   {
@@ -81,7 +81,7 @@ const Home = withRouter(({ location, history }) => {
               Get latest feed of your favorite Vtubers in one app.
               </p>
             </div>
-            <div className='subsection'>
+            <div className='subsection imgbackground'>
               <img style={demoStyle} src={homegif} alt='404'/>
             </div>
           </div>
@@ -93,7 +93,7 @@ const Home = withRouter(({ location, history }) => {
           })}>
             {
               !isMobile &&
-              <div className='subsection'>
+              <div className='subsection imgbackground'>
                 <img style={demoStyle} src={searchgif} alt='404'/>
               </div>
             }
@@ -105,7 +105,7 @@ const Home = withRouter(({ location, history }) => {
             </div>
             {
               isMobile &&
-              <div className='subsection'>
+              <div className='subsection imgbackground'>
                 <img style={demoStyle} src={searchgif} alt='404'/>
               </div>
             }
@@ -122,7 +122,7 @@ const Home = withRouter(({ location, history }) => {
               Select from thousands of Vtubers in database.
               </p>
             </div>
-            <div className='subsection'>
+            <div className='subsection imgbackground'>
               <img style={demoStyle} src={subscriptionsgif} alt='404'/>
             </div>
           </div>
@@ -136,7 +136,7 @@ const Home = withRouter(({ location, history }) => {
           })}>
             {
               !isMobile &&
-              <div className='subsection'>
+              <div className='subsection imgbackground'>
                 <img style={demoStyle} src={groupgif} alt='404'/>
               </div>
             }
@@ -148,7 +148,7 @@ const Home = withRouter(({ location, history }) => {
             </div>
             {
               isMobile &&
-              <div className='subsection'>
+              <div className='subsection imgbackground'>
                 <img style={demoStyle} src={groupgif} alt='404'/>
               </div>
             }
@@ -166,7 +166,7 @@ const Home = withRouter(({ location, history }) => {
               Add a tag to your favorite Vtuber, make modification suggestion to Vtuber in database, or make suggestion on new Vtubers.
               </p>
             </div>
-            <div className='subsection'>
+            <div className='subsection imgbackground'>
               <img style={demoStyle} src={suggestiongif} alt='404'/>
             </div>
           </div>
@@ -179,19 +179,19 @@ const Home = withRouter(({ location, history }) => {
           })}>
             {
               !isMobile &&
-              <div className='subsection'>
+              <div className='subsection imgbackground'>
                 <img style={demoStyle} src={customizegif} alt='404'/>
               </div>
             }
             <div className='subsection'>
               <h1> Customize Your Account </h1>
               <p>
-              Upload your profile picture and change your nickname at anytime.
+              Upload your profile picture and change your nickname at anytime, or change the color and font of the app.
               </p>
             </div>
             {
               isMobile &&
-              <div className='subsection'>
+              <div className='subsection imgbackground'>
                 <img style={demoStyle} src={customizegif} alt='404'/>
               </div>
             }
