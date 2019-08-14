@@ -14,7 +14,7 @@ import { putImage, putNickname } from '../../../api/express.js';
 import { updateProfile } from '../../../api/firebase.js';
 import { changeNicknameBegin, changeNicknameSuccess, changeNicknameFailure, changeImageBegin, changeImageSuccess, changeImageFailure } from '../../../actions/userActions.js';
 
-const imageSize = 125;
+const imageSize = 500;
 
 const mapStateToProps = (state) => {
   const { user } = state
@@ -143,7 +143,7 @@ class ChangeAccountScreen extends React.Component {
             :
             <View style={styles(this.props.user.colorTheme).nicknameTextContainer}>
               <Text style={[fontsStyles(this.props.user.font).uiheader,styles(this.props.user.colorTheme).nickname]}>
-              { this.props.user.nickname === ""? "Add a Nickname" : this.props.user.nickname } 
+              { this.props.user.nickname === ""? "Add a Nickname" : this.props.user.nickname }
               </Text>
               <TouchableOpacity onPress={() => this.setState({editNickname: true})} style={styles(this.props.user.colorTheme).nicknameIcon}>
                 <Icon name="md-create" size={20}/>
