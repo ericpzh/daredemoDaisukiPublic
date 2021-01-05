@@ -7,7 +7,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "expo": "^33.0.0",
     "firebase": "^6.3.3",
     "native-base": "^2.12.1",
